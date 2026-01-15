@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>木板厂集装箱配柜系统</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --accent-hover: #2980b9;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .main-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .sx-logo-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffb347, #ff5f6d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .sx-logo-mark span {
+            letter-spacing: 1px;
+        }
+
+        .sx-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sx-logo-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sx-logo-sub {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+
+        .input-area {
+            padding: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        #packageInput {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        #packageInput:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            background: #95a5a6;
+        }
+
+        button.secondary:hover {
+            background: #7f8c8d;
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        button.danger:hover {
+            background: #c0392b;
+        }
+
+        .result-area {
+            padding: 30px;
+        }
+
+        /* 汇总卡片样式 */
+        .summary-card {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            text-align: center;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        /* 矩阵表格样式 */
+        .matrix-container {
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: white;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: center;
+        }
+
+        .matrix-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .matrix-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .matrix-table tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .matrix-total {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* 详情展示样式 */
+        .container-display {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .container-header {
+            background: #eceff1;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .container-body {
+            display: flex;
+            padding: 20px;
+            gap: 15px;
+            overflow-x: auto;
+        }
+
+        .column-box {
+            flex: 1;
+            min-width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .cargo-bar-container {
+            height: 40px;
+            /* 增加高度 */
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cargo-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .cargo-bar:hover {
+            filter: brightness(1.1);
+            z-index: 2;
+        }
+
+        /* 颜色循环，让包裹看起来分开 */
+        .cargo-bar:nth-child(4n+1) {
+            background-color: #3498db;
+        }
+
+        .cargo-bar:nth-child(4n+2) {
+            background-color: #2ecc71;
+        }
+
+        .cargo-bar:nth-child(4n+3) {
+            background-color: #9b59b6;
+        }
+
+        .cargo-bar:nth-child(4n+4) {
+            background-color: #f1c40f;
+            color: #333;
+        }
+
+        /* Tooltip */
+        #customTooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            z-index: 10000;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.4;
+            max-width: 300px;
+        }
+
+        .tips-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            border-radius: var(--radius);
+        }
+
+        .footer-signature {
+            font-size: 11px;
+            color: #999;
+            text-align: right;
+            margin: 10px 30px 20px;
+        }
+
+        /* 打印样式 */
+        @media print {
+            @page {
+                margin: 0;
+            }
+
+            body {
+                background: white;
+                padding: 15mm;
+            }
+
+            .input-area,
+            .btn-group,
+            #historySection {
+                /* 打印时隐藏输入区域和历史记录 */
+                display: none !important;
+            }
+
+            .header {
+                background: #ffffff;
+                color: #000000;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .main-container {
+                box-shadow: none;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            /* ... (rest of print styles) */
+            .result-area {
+                padding: 0;
+            }
+
+            .container-display {
+                break-inside: avoid;
+                border: 1px solid #000;
+            }
+
+            .cargo-bar {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .matrix-table th {
+                background-color: #ccc !important;
+                color: black;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .summary-card {
+                border: 1px solid #000;
+                background: none;
+            }
+
+            .stat-item {
+                border: 1px solid #eee;
+                box-shadow: none;
+            }
+
+            /* --- 仅打印分布表模式 --- */
+            body.print-matrix-only #summary,
+            body.print-matrix-only #details {
+                display: none !important;
+            }
+
+            body.print-matrix-only .matrix-container {
+                margin: 0;
+                overflow: visible;
+            }
+
+            body.print-matrix-only .matrix-table th {
+                background-color: #ccc !important;
+            }
+        }
+
+        /* 登录遮罩样式 */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            backdrop-filter: blur(5px);
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* 历史记录区域样式 */
+        .history-section {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-color);
+            background: #fdfdfd;
+        }
+
+        .history-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-card {
+            background: white;
+            border: 1px solid #eee;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px;
+            border-radius: 4px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .history-info {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .history-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-mini {
+            padding: 4px 8px;
+            font-size: 12px;
+            background: #eee;
+            color: #555;
+            border-radius: 4px;
+        }
+
+        .btn-mini.load {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-mini.del {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-mini:hover {
+            filter: brightness(0.95);
+        }
+
+        /* 旋转项目高亮 - 特别显著以便打印 */
+        .rotated-highlight {
+            border: 2px solid #e74c3c !important;
+            /* 粗红边框 */
+            background-color: #f1c40f !important;
+            /* 亮黄色背景 */
+            color: #000 !important;
+            font-weight: 900 !important;
+            box-shadow: inset 0 0 0 1px #e74c3c;
+        }
+
+        /* 打印时加强 2250 行的高亮 */
+        @media print {
+            .matrix-table tr.highlight-row td {
+                background-color: #ffff00 !important;
+                border: 2px solid #000 !important;
+                font-weight: bold !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .rotated-highlight {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                border: 2px solid #ff0000 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 登录遮罩 -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>系统登录</h2>
+            <input type="password" id="passwordInput" placeholder="请输入密码..." autofocus>
+            <button id="loginBtn" style="width:100%">进入系统</button>
+            <p id="loginError" style="color:red;font-size:12px;margin-top:10px;display:none;">密码错误</p>
+        </div>
+    </div>
+
+    <div id="customTooltip"></div>
+    <div class="main-container">
+        <div class="header">
+            <div class="header-main">
+                <div class="sx-logo-mark"><span>少侠</span></div>
+                <div class="sx-logo-text">
+                    <div class="sx-logo-name">少侠加油吧</div>
+                    <div class="sx-logo-sub">SHAOXIA JIAYOUBA</div>
+                </div>
+            </div>
+            <div>
+                <h1>木板厂集装箱配柜系统 v2.1</h1>
+                <p>智能优化算法 · 自动生成分布表 · 支持多柜连打 · 负数修复版</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="form-group">
+                <label for="packageInput">录入数据（每行：长度mm 件数），例如：1200 20 或 950x15</label>
+                <textarea id="packageInput" placeholder="请输入数据..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>基本设置</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="container" value="BIG" checked>
+                        <span>大柜</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="container" value="SMALL">
+                        <span>小柜</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="container" value="MIXED">
+                        <span>智能混合 (自动选柜)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>柜长参数</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <span>大柜长度</span>
+                        <input type="number" id="bigLengthInput" value="11800" min="1" step="50" style="width:100px;padding:4px 8px;">
+                        <span>mm</span>
+                    </label>
+                    <label class="radio-item">
+                        <span>小柜长度</span>
+                        <input type="number" id="smallLengthInput" value="5850" min="1" step="50" style="width:100px;padding:4px 8px;">
+                        <span>mm</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>优化模式</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="mode" value="HIGH" checked>
+                        <span>优先整齐 (90%以上利用率才开新列)</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="mode" value="ALL">
+                        <span>强力装载 (只要能装就塞进柜子)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>短料控制</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <span>短料判定长度 ≤</span>
+                        <input type="number" id="shortThresholdInput" value="2050" min="0" step="10" style="width:90px;padding:4px 8px;">
+                        <span>mm</span>
+                    </label>
+                    <label class="radio-item">
+                        <span>短料目标占比</span>
+                        <input type="number" id="shortRatioInput" value="10" min="0" max="100" step="1" style="width:80px;padding:4px 8px;">
+                        <span>%</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="checkbox" id="shortStrictToggle">
+                        <span>强制短料占比上限</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button id="computeBtn">开始计算配柜</button>
+                <button id="saveBtn" style="background-color:#27ae60;">保存方案</button>
+                <button id="exportBtn" class="secondary">导出 Excel/CSV</button>
+                <button id="printBtn" class="secondary">打印全部</button>
+                <button id="printMatrixBtn" class="secondary" style="background-color:#8e44ad;">打印分布表</button>
+                <button id="clearBtn" class="danger">清空输入</button>
+            </div>
+        </div>
+
+        <div id="historySection" class="history-section" style="display:none;">
+            <div class="history-title">
+                <span>历史保存方案</span>
+                <span style="font-size:12px;font-weight:normal;color:#666;">本地存储</span>
+            </div>
+            <div id="historyList" class="history-list"></div>
+        </div>
+
+        <div class="result-area">
+            <div id="summary"></div>
+            <div id="matrixArea" class="matrix-container"></div>
+            <div id="details"></div>
+        </div>
+        <div class="footer-signature">少侠加油吧</div>
+    </div>
+
+    <script>
+        // --- 核心常量配置 ---
+        const CONFIG = {
+            caps: { BIG: 11800, SMALL: 5850 },
+            minUtil: 0.9, // 严格模式下的最低利用率
+            maxCombo: 5,   // 组合最大复杂度
+            rotatableLength: 2250,
+            rotatedEffectiveLength: 1100,
+            shortThreshold: 2050
+        };
+
+        // --- 全局状态 ---
+        const State = {
+            inputData: [],
+            results: null
+        };
+
+        // --- 初始化 & 存储逻辑 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            // 自动保留输入
+            document.querySelectorAll('input, textarea').forEach(el => {
+                el.addEventListener('change', saveToStorage);
+                el.addEventListener('input', saveToStorage);
+            });
+
+            // 绑定按钮事件
+            document.getElementById('computeBtn').addEventListener('click', runCalculation);
+            document.getElementById('saveBtn').addEventListener('click', saveCurrentSolution);
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('printBtn').addEventListener('click', () => {
+                document.body.classList.remove('print-matrix-only');
+                window.print();
+            });
+            document.getElementById('printMatrixBtn').addEventListener('click', () => {
+                document.body.classList.add('print-matrix-only');
+                window.print();
+                // 打印对话框关闭后移除类，但 browsers handle this differently.
+                // 简单的做法是利用 onafterprint (modern browsers)
+            });
+
+            window.addEventListener('afterprint', () => {
+                document.body.classList.remove('print-matrix-only');
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+            // 登录逻辑
+            const passInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const overlay = document.getElementById('loginOverlay');
+
+            function checkLogin() {
+                if (passInput.value === 'ASI') {
+                    overlay.style.display = 'none';
+                    // 登录成功后加载历史记录
+                    renderHistory();
+                    document.getElementById('historySection').style.display = 'block';
+                } else {
+                    document.getElementById('loginError').style.display = 'block';
+                    passInput.value = '';
+                    passInput.focus();
+                }
+            }
+
+            loginBtn.addEventListener('click', checkLogin);
+            passInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkLogin();
+            });
+
+            // 初始化历史记录
+            renderHistory();
+        });
+
+        // --- 存储功能 ---
+        const HISTORY_KEY = 'pkg_history_v1';
+
+        function saveCurrentSolution() {
+            if (!State.results) {
+                alert('请先计算出一个方案后再保存。');
+                return;
+            }
+
+            const name = prompt("请输入方案名称 (可选):", "方案 " + new Date().toLocaleString());
+            if (name === null) return; // Cancel
+
+            const record = {
+                id: Date.now(),
+                name: name || "未命名方案",
+                time: new Date().toLocaleString(),
+                pkg_input: document.getElementById('packageInput').value,
+                pkg_container: document.querySelector('input[name="container"]:checked').value,
+                pkg_mode: document.querySelector('input[name="mode"]:checked').value,
+                summaryStr: `${State.results.containers.length}个柜 | ${State.results.totalCount}件`
+            };
+
+            const list = getHistory();
+            list.unshift(record); // Add to top
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+            renderHistory();
+            alert('保存成功！');
+        }
+
+        function getHistory() {
+            try {
+                return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function deleteHistory(id) {
+            if (!confirm('确定删除这条记录吗？')) return;
+            const list = getHistory().filter(item => item.id !== id);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+            renderHistory();
+        }
+
+        function loadHistory(id) {
+            const list = getHistory();
+            const item = list.find(r => r.id === id);
+            if (!item) return;
+
+            document.getElementById('packageInput').value = item.pkg_input;
+
+            // Set Radio
+            const r1 = document.querySelector(`input[name="container"][value="${item.pkg_container}"]`);
+            if (r1) r1.checked = true;
+
+            const r2 = document.querySelector(`input[name="mode"][value="${item.pkg_mode}"]`);
+            if (r2) r2.checked = true;
+
+            // Trigger calc
+            runCalculation();
+            alert(`方案 "${item.name}" 已重新加载。`);
+            window.scrollTo(0, 0);
+        }
+
+        function renderHistory() {
+            const list = getHistory();
+            const container = document.getElementById('historyList');
+            const section = document.getElementById('historySection');
+
+            // 如果已登录，则显示
+            // 我们简单处理，如果Overlay隐藏了就显示区域
+            if (document.getElementById('loginOverlay').style.display !== 'none') return;
+            section.style.display = 'block';
+
+            if (list.length === 0) {
+                container.innerHTML = '<div style="color:#999;font-size:14px;">暂无保存的方案</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(item => `
+                <div class="history-card">
+                    <div class="history-time">${item.time}</div>
+                    <div class="history-info">${item.name}</div>
+                    <div style="font-size:12px;color:#555;margin-bottom:8px;">${item.summaryStr}</div>
+                    <div class="history-actions">
+                        <button class="btn-mini load" onclick="loadHistory(${item.id})">加载</button>
+                        <button class="btn-mini del" onclick="deleteHistory(${item.id})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-bind global exposing for onclick (dirty hack for inline onclick in template string)
+            window.loadHistory = loadHistory;
+            window.deleteHistory = deleteHistory;
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('pkg_input', document.getElementById('packageInput').value);
+            localStorage.setItem('pkg_container', document.querySelector('input[name="container"]:checked').value);
+            localStorage.setItem('pkg_mode', document.querySelector('input[name="mode"]:checked').value);
+            const shortEl = document.getElementById('shortRatioInput');
+            if (shortEl) {
+                localStorage.setItem('pkg_shortRatio', shortEl.value);
+            }
+            const bigLenEl = document.getElementById('bigLengthInput');
+            if (bigLenEl) {
+                localStorage.setItem('pkg_bigLen', bigLenEl.value);
+            }
+            const smallLenEl = document.getElementById('smallLengthInput');
+            if (smallLenEl) {
+                localStorage.setItem('pkg_smallLen', smallLenEl.value);
+            }
+            const shortThresholdEl = document.getElementById('shortThresholdInput');
+            if (shortThresholdEl) {
+                localStorage.setItem('pkg_shortThreshold', shortThresholdEl.value);
+            }
+            const shortStrictEl = document.getElementById('shortStrictToggle');
+            if (shortStrictEl) {
+                localStorage.setItem('pkg_shortStrict', shortStrictEl.checked ? '1' : '0');
+            }
+        }
+
+        function loadFromStorage() {
+            if (localStorage.getItem('pkg_input')) document.getElementById('packageInput').value = localStorage.getItem('pkg_input');
+            const savedCont = localStorage.getItem('pkg_container');
+            if (savedCont) {
+                const radio = document.querySelector(`input[name="container"][value="${savedCont}"]`);
+                if (radio) radio.checked = true;
+            }
+            const savedMode = localStorage.getItem('pkg_mode');
+            if (savedMode) {
+                const radio = document.querySelector(`input[name="mode"][value="${savedMode}"]`);
+                if (radio) radio.checked = true;
+            }
+            const savedShort = localStorage.getItem('pkg_shortRatio');
+            if (savedShort !== null && document.getElementById('shortRatioInput')) {
+                document.getElementById('shortRatioInput').value = savedShort;
+            }
+            const savedBigLen = localStorage.getItem('pkg_bigLen');
+            if (savedBigLen !== null && document.getElementById('bigLengthInput')) {
+                document.getElementById('bigLengthInput').value = savedBigLen;
+            }
+            const savedSmallLen = localStorage.getItem('pkg_smallLen');
+            if (savedSmallLen !== null && document.getElementById('smallLengthInput')) {
+                document.getElementById('smallLengthInput').value = savedSmallLen;
+            }
+            const savedShortThreshold = localStorage.getItem('pkg_shortThreshold');
+            if (savedShortThreshold !== null && document.getElementById('shortThresholdInput')) {
+                document.getElementById('shortThresholdInput').value = savedShortThreshold;
+            }
+            const savedShortStrict = localStorage.getItem('pkg_shortStrict');
+            if (savedShortStrict !== null && document.getElementById('shortStrictToggle')) {
+                document.getElementById('shortStrictToggle').checked = savedShortStrict === '1';
+            }
+        }
+
+        function clearAll() {
+            if (confirm('确定要清空所有输入吗？')) {
+                document.getElementById('packageInput').value = '';
+                document.getElementById('summary').innerHTML = '';
+                document.getElementById('matrixArea').innerHTML = '';
+                document.getElementById('details').innerHTML = '';
+                saveToStorage();
+            }
+        }
+
+        // --- 核心算法部分 ---
+
+        function parseInput(text) {
+            const lines = text.split(/\n+/).map(l => l.trim()).filter(Boolean);
+            const items = [];
+            for (const line of lines) {
+                // 支持格式: "1200 20", "1200x20", "1200*20", "1200"
+                const parts = line.toLowerCase().replace(/[x*×]/g, ' ').trim().split(/\s+/);
+                let len = 0, cnt = 1;
+
+                if (parts.length >= 1) len = parseInt(parts[0]);
+                if (parts.length >= 2) cnt = parseInt(parts[1]);
+
+                if (len > 0 && cnt > 0) {
+                    items.push({ length: len, count: cnt });
+                }
+            }
+            return items;
+        }
+
+        // 将输入转换为最小单位（每件板材一个对象），方便算法处理
+        // 注意：为提高性能，库存跟踪使用 Map，但在装箱时具体引用
+        function preprocessItems(items) {
+            // 统计总库存
+            const inventory = new Map(); // Length -> Count
+            let totalLen = 0;
+            let totalCount = 0;
+
+            items.forEach(it => {
+                const current = inventory.get(it.length) || 0;
+                inventory.set(it.length, current + it.count);
+                totalLen += it.length * it.count;
+                totalCount += it.count;
+            });
+            return { inventory, totalLen, totalCount };
+        }
+
+        // 查找最佳的“4列同配”方案
+        // 返回: { recipe: [{len, count}...], totalLen, utilization } 或 null
+        // 核心约束: 必须每种板材的数量 >= count * 4
+        function findBestRecipe(inventory, cap, minUtil, uniqueLengths) {
+            let bestRecipe = null;
+
+            // 递归搜索组合
+            function backtrack(idx, currentRecipe, currentLen) {
+                // 剪枝
+                if (currentLen > cap) return;
+
+                // 检查当前方案是否更优
+                const util = currentLen / cap;
+                if (util >= minUtil) {
+                    // 检查是否比已找到的更优 (优先利用率高，其次长度大)
+                    if (!bestRecipe || util > bestRecipe.utilization || (util === bestRecipe.utilization && currentLen > bestRecipe.totalLen)) {
+                        bestRecipe = {
+                            recipe: JSON.parse(JSON.stringify(currentRecipe)),
+                            totalLen: currentLen,
+                            utilization: util
+                        };
+                    }
+                    if (util === 1.0) return; // 完美匹配，无需继续
+                }
+
+                if (idx >= uniqueLengths.length) return;
+                if (currentRecipe.length >= CONFIG.maxCombo) return; // 限制组合复杂度
+
+                const len = uniqueLengths[idx];
+                const available = inventory.get(len) || 0;
+
+                // --- 动态旋转判断逻辑 ---
+                const is2250 = (len === CONFIG.rotatableLength);
+                
+                // 判断是否需要旋转：剩余空间接近1100mm时才旋转
+                let effectiveLen, isRot, needPerStep;
+                
+                if (is2250) {
+                    // 计算剩余空间
+                    const remainingSpace = cap - currentLen;
+                    
+                    // 判断条件：剩余空间足够放下至少一个完整2250，就不旋转
+                    // 否则（空间紧张）就旋转成1100mm组合件
+                    if (remainingSpace >= len) {
+                        // 空间充足：正常装载
+                        effectiveLen = len;
+                        isRot = false;
+                        needPerStep = 4; // 4列同步
+                    } else {
+                        // 空间紧张：旋转装载
+                        effectiveLen = CONFIG.rotatedEffectiveLength;
+                        isRot = true;
+                        needPerStep = 2; // 跨2列
+                    }
+                } else {
+                    // 非2250板材
+                    effectiveLen = len;
+                    isRot = false;
+                    needPerStep = 4; // 4列同步
+                }
+
+                // 约束1: 空间限制
+                const maxBySpace = Math.floor((cap - currentLen) / effectiveLen);
+                // 约束2: 库存限制
+                const maxByStock = Math.floor(available / needPerStep);
+
+                const maxCount = Math.min(maxBySpace, maxByStock);
+
+                // 尝试放入 i 个该长度板材
+                for (let i = maxCount; i >= 0; i--) {
+                    if (i > 0) {
+                        currentRecipe.push({ 
+                            len, 
+                            count: i, 
+                            isRot: isRot, 
+                            effectiveLen,
+                            is2250Normal: (is2250 && !isRot) // 标记是否为正常装载的2250
+                        });
+                        backtrack(idx + 1, currentRecipe, currentLen + effectiveLen * i);
+                        currentRecipe.pop();
+                    } else {
+                        // 不选当前长度，跳过
+                        backtrack(idx + 1, currentRecipe, currentLen);
+                    }
+                    if (bestRecipe && bestRecipe.utilization === 1.0) break;
+                }
+            }
+
+            backtrack(0, [], 0);
+            return bestRecipe;
+        }
+
+        // 尝试向单列填充剩余散件 (Best Fit Descending)
+        function fillColumnWithLooseItems(column, inventory, cap, uniqueLengths) {
+            let changed = true;
+            while (changed && column.used < cap) {
+                changed = false;
+                const remainingSpace = cap - column.used;
+
+                // 尝试找一个能塞进去的最大的板子
+                for (const len of uniqueLengths) {
+                    if (len <= remainingSpace && (inventory.get(len) || 0) > 0) {
+                        // 放入
+                        column.items.push(len);
+                        column.used += len;
+                        inventory.set(len, inventory.get(len) - 1);
+                        changed = true;
+                        break; // 贪心：放入一个由大到小合适的后，重新开始循环填缝
+                    }
+                }
+            }
+        }
+
+        function computeCurrentShortRatio(initialInventory, remainingInventory, threshold) {
+            let usedShort = 0;
+            let usedTotal = 0;
+            initialInventory.forEach((initialCount, len) => {
+                const remain = remainingInventory.get(len) || 0;
+                const used = initialCount - remain;
+                if (used > 0) {
+                    usedTotal += used;
+                    if (len <= threshold) usedShort += used;
+                }
+            });
+            if (usedTotal === 0) return 0;
+            return usedShort / usedTotal;
+        }
+
+        function computeContainerShortStats(container, threshold) {
+            let shortCount = 0;
+            let totalCount = 0;
+            container.columns.forEach(col => {
+                col.items.forEach(it => {
+                    if (typeof it === 'number') {
+                        totalCount += 1;
+                        if (it <= threshold) shortCount += 1;
+                    } else if (typeof it === 'string') {
+                        if (it.includes('2×')) {
+                            const match = it.match(/2×(\d+)/);
+                            const len = match ? parseInt(match[1], 10) : CONFIG.rotatableLength;
+                            totalCount += 2;
+                            if (len <= threshold) shortCount += 2;
+                        } else if (it.includes('⟲')) {
+                            const len = parseInt(it.replace('⟲', ''), 10);
+                            totalCount += 1;
+                            if (len <= threshold) shortCount += 1;
+                        }
+                    }
+                });
+            });
+            return { shortCount, totalCount };
+        }
+
+        function runCalculation() {
+            const rawText = document.getElementById('packageInput').value;
+            const containerType = document.querySelector('input[name="container"]:checked').value;
+            // 模式主要影响: 是否强制在不满利用率时停止 (但现在的修正逻辑是总是装完)
+            // 所以 MODE 主要影响的是 "findBestRecipe" 的 minUtil 阈值
+            const userMode = document.querySelector('input[name="mode"]:checked').value;
+
+            const inputItems = parseInput(rawText);
+            if (!inputItems.length) {
+                alert('请先输入有效数据！');
+                return;
+            }
+
+            const shortRatioInput = document.getElementById('shortRatioInput');
+            let targetShortRatio = shortRatioInput ? parseFloat(shortRatioInput.value) : 0;
+            if (isNaN(targetShortRatio) || targetShortRatio < 0) targetShortRatio = 0;
+            if (targetShortRatio > 100) targetShortRatio = 100;
+            targetShortRatio = targetShortRatio / 100;
+
+            const bigLenInput = document.getElementById('bigLengthInput');
+            let bigCap = bigLenInput ? parseInt(bigLenInput.value, 10) : CONFIG.caps.BIG;
+            if (!bigCap || bigCap <= 0) bigCap = CONFIG.caps.BIG;
+            const smallLenInput = document.getElementById('smallLengthInput');
+            let smallCap = smallLenInput ? parseInt(smallLenInput.value, 10) : CONFIG.caps.SMALL;
+            if (!smallCap || smallCap <= 0) smallCap = CONFIG.caps.SMALL;
+            const caps = { BIG: bigCap, SMALL: smallCap };
+
+            const shortThresholdInput = document.getElementById('shortThresholdInput');
+            let shortThreshold = shortThresholdInput ? parseInt(shortThresholdInput.value, 10) : CONFIG.shortThreshold;
+            if (!shortThreshold || shortThreshold < 0) shortThreshold = CONFIG.shortThreshold;
+            const shortStrictInput = document.getElementById('shortStrictToggle');
+            const enforceShortLimit = shortStrictInput ? shortStrictInput.checked : false;
+
+            const { inventory, totalLen, totalCount } = preprocessItems(inputItems);
+            const initialInventory = new Map(inventory);
+            let remainingInventory = new Map(inventory);
+
+            const containers = [];
+            const uniqueLengths = Array.from(remainingInventory.keys()).sort((a, b) => b - a); // 降序
+
+            // 根据模式调整参数
+            const minRecipeUtil = userMode === 'HIGH' ? 0.9 : 0.6;
+
+            // 主循环：只要还有板子，就继续装
+            let loopGuard = 0;
+            while (Array.from(remainingInventory.values()).some(c => c > 0)) {
+                loopGuard++;
+                if (loopGuard > 1000) { alert('计算超时，可能有死循环'); break; }
+
+                // -- 步骤1: 决定新柜子类型 --
+                let currentCap;
+                let currentType;
+
+                const globalShortRatio = computeCurrentShortRatio(initialInventory, remainingInventory, shortThreshold);
+                let lengthsForRecipe = uniqueLengths;
+                if (globalShortRatio + 1e-6 < targetShortRatio) {
+                    lengthsForRecipe = uniqueLengths.slice().sort((a, b) => {
+                        const aShort = a <= shortThreshold;
+                        const bShort = b <= shortThreshold;
+                        if (aShort && !bShort) return -1;
+                        if (!aShort && bShort) return 1;
+                        return b - a;
+                    });
+                }
+
+                if (containerType === 'MIXED') {
+                    // 简单策略：如果剩余总量很大，选大柜；否则看能否塞进小柜
+                    // 实际上，为了配合 Recipe，我们应该试探。
+                    // 简化逻辑：默认优先大柜，除非剩余极少。
+                    // 更智能点：基于当前的 Best Recipe 决定，同时优先消化短料。
+                    const recipeBig = findBestRecipe(remainingInventory, caps.BIG, minRecipeUtil, lengthsForRecipe);
+                    const recipeSmall = findBestRecipe(remainingInventory, caps.SMALL, minRecipeUtil, lengthsForRecipe);
+
+                    // 比较哪个利用率更好，或者如果大柜能装更多绝对值
+                    if (!recipeBig && !recipeSmall) {
+                        // 都没有 Recipe，说明都是散件。
+                        // 如果剩余货多 -> 大柜，少 -> 小柜
+                        const leftTotal = Array.from(remainingInventory.entries()).reduce((s, [l, c]) => s + l * c, 0);
+                        currentType = leftTotal > caps.SMALL * 4 ? 'BIG' : 'SMALL';
+                    } else if (recipeBig && !recipeSmall) {
+                        currentType = 'BIG';
+                    } else if (!recipeBig && recipeSmall) {
+                        currentType = 'SMALL';
+                    } else {
+                        // 都有
+                        currentType = recipeBig.utilization >= recipeSmall.utilization ? 'BIG' : 'SMALL';
+                    }
+                } else {
+                    currentType = containerType;
+                }
+                currentCap = caps[currentType];
+
+                // -- 步骤2: 创新柜子 --
+                const container = {
+                    type: currentType,
+                    cap: currentCap,
+                    columns: [
+                        { used: 0, items: [] },
+                        { used: 0, items: [] },
+                        { used: 0, items: [] },
+                        { used: 0, items: [] }
+                    ]
+                };
+
+                // -- 步骤3: 核心配载 (Recipe) --
+                while (true) {
+                    const minUsed = Math.min(...container.columns.map(c => c.used));
+                    const commonSpace = currentCap - minUsed;
+                    if (commonSpace <= 0) break;
+
+                    const stepShortRatio = computeCurrentShortRatio(initialInventory, remainingInventory, shortThreshold);
+                    let stepLengths = uniqueLengths;
+                    if (stepShortRatio + 1e-6 < targetShortRatio) {
+                        stepLengths = uniqueLengths.slice().sort((a, b) => {
+                            const aShort = a <= shortThreshold;
+                            const bShort = b <= shortThreshold;
+                            if (aShort && !bShort) return -1;
+                            if (!aShort && bShort) return 1;
+                            return b - a;
+                        });
+                    }
+
+                    let recipe = findBestRecipe(remainingInventory, commonSpace, 0.01, stepLengths);
+
+                    const enforceStrictRecipe = enforceShortLimit && targetShortRatio > 0;
+                    if (recipe && enforceStrictRecipe) {
+                        const stats = computeContainerShortStats(container, shortThreshold);
+                        let addShort = 0;
+                        let addTotal = 0;
+                        recipe.recipe.forEach(item => {
+                            const len = item.len;
+                            let piecesPerContainer = 0;
+                            if (item.isRot) {
+                                // 每个组合件2块，4列
+                                piecesPerContainer = 8 * item.count;
+                            } else {
+                                // 普通件或2250正常件：4列
+                                piecesPerContainer = 4 * item.count;
+                            }
+                            addTotal += piecesPerContainer;
+                            if (len <= shortThreshold) {
+                                addShort += piecesPerContainer;
+                            }
+                        });
+                        if (addTotal > 0) {
+                            const totalAfter = stats.totalCount + addTotal;
+                            const shortAfter = stats.shortCount + addShort;
+                            if (totalAfter > 0 && (shortAfter / totalAfter) - targetShortRatio > 1e-6) {
+                                const longOnly = stepLengths.filter(l => l > shortThreshold);
+                                if (longOnly.length > 0) {
+                                    recipe = findBestRecipe(remainingInventory, commonSpace, 0.01, longOnly);
+                                } else {
+                                    recipe = null;
+                                }
+                            }
+                        }
+                    }
+
+                    if (recipe) {
+                        recipe.recipe.forEach(item => {
+                            if (item.is2250Normal) {
+                                for (let i = 0; i < 4; i++) {
+                                    for (let k = 0; k < item.count; k++) {
+                                        container.columns[i].items.push(item.len);
+                                        container.columns[i].used += item.len;
+                                    }
+                                }
+                                remainingInventory.set(item.len, remainingInventory.get(item.len) - item.count * 4);
+                            } else if (item.isRot) {
+                                [[0, 1], [2, 3]].forEach(pair => {
+                                    pair.forEach(colIdx => {
+                                        for (let combo = 0; combo < item.count; combo++) {
+                                            container.columns[colIdx].items.push('2×2250⟲');
+                                            container.columns[colIdx].used += item.effectiveLen;
+                                        }
+                                    });
+                                });
+                                remainingInventory.set(item.len, remainingInventory.get(item.len) - item.count * 2);
+                            } else {
+                                for (let i = 0; i < 4; i++) {
+                                    for (let k = 0; k < item.count; k++) {
+                                        container.columns[i].items.push(item.len);
+                                        container.columns[i].used += item.len;
+                                    }
+                                }
+                                remainingInventory.set(item.len, remainingInventory.get(item.len) - item.count * 4);
+                            }
+                        });
+                    } else {
+                        break;
+                    }
+                }
+
+                // -- 步骤4: 散件填充 (Loose Fill with Rotation awareness) --
+                const pairs = [[0, 1], [2, 3]];
+                pairs.forEach(([i, j]) => {
+                    let changed = true;
+                    while (changed) {
+                        changed = false;
+                        const colI = container.columns[i];
+                        const colJ = container.columns[j];
+
+                        // 智能填充2250：根据空间决定是否旋转
+                        if (remainingInventory.get(CONFIG.rotatableLength) > 0) {
+                            const remaining2250 = remainingInventory.get(CONFIG.rotatableLength);
+                            const spaceI = currentCap - colI.used;
+                            const spaceJ = currentCap - colJ.used;
+                            
+                            // 判断是否需要旋转
+                            if (spaceI >= CONFIG.rotatableLength && spaceJ >= CONFIG.rotatableLength) {
+                                // 空间充足：正常装载
+                                [colI, colJ].forEach(c => {
+                                    c.items.push(CONFIG.rotatableLength);
+                                    c.used += CONFIG.rotatableLength;
+                                });
+                                remainingInventory.set(CONFIG.rotatableLength, remainingInventory.get(CONFIG.rotatableLength) - 2);
+                                changed = true; continue;
+                            } else if (remaining2250 >= 2 && 
+                                      spaceI >= CONFIG.rotatedEffectiveLength && 
+                                      spaceJ >= CONFIG.rotatedEffectiveLength) {
+                                // 空间紧张：旋转装载
+                                [colI, colJ].forEach(c => {
+                                    c.items.push('2×2250⟲');
+                                    c.used += CONFIG.rotatedEffectiveLength;
+                                });
+                                remainingInventory.set(CONFIG.rotatableLength, remainingInventory.get(CONFIG.rotatableLength) - 2);
+                                changed = true; continue;
+                            }
+                        }
+
+                        for (let col of [colI, colJ]) {
+                            const currentShortRatio = computeCurrentShortRatio(initialInventory, remainingInventory, shortThreshold);
+                            let orderedLengths = uniqueLengths.slice();
+                            if (currentShortRatio + 1e-6 < targetShortRatio) {
+                                orderedLengths.sort((a, b) => {
+                                    const aShort = a <= shortThreshold;
+                                    const bShort = b <= shortThreshold;
+                                    if (aShort && !bShort) return -1;
+                                    if (!aShort && bShort) return 1;
+                                    return b - a;
+                                });
+                            }
+                            const enableStrict = enforceShortLimit && targetShortRatio > 0;
+                            for (let len of orderedLengths) {
+                                if (remainingInventory.get(len) > 0 && (currentCap - col.used) >= len) {
+                                    if (enableStrict && len <= shortThreshold) {
+                                        const stats = computeContainerShortStats(container, shortThreshold);
+                                        const totalAfter = stats.totalCount + 1;
+                                        const shortAfter = stats.shortCount + 1;
+                                        if (totalAfter > 0 && (shortAfter / totalAfter) - targetShortRatio > 1e-6) {
+                                            continue;
+                                        }
+                                    }
+                                    col.items.push(len);
+                                    col.used += len;
+                                    remainingInventory.set(len, remainingInventory.get(len) - 1);
+                                    changed = true; break;
+                                }
+                            }
+                            if (changed) break;
+                        }
+                    }
+                });
+
+                // 如果这个柜子是空的（极少情况），但还有库存？逻辑上应该不会，除非所有板子都比柜子长。
+                // 如果是空的，强行终止防止死循环（虽然有loopGuard）
+                if (container.columns.every(c => c.used === 0)) {
+                    // 可能是板材太长放入不进去？
+                    break;
+                }
+
+                containers.push(container);
+            }
+
+            State.results = { containers, totalLen, totalCount, inputItems };
+            renderUI();
+        }
+
+        // --- 渲染逻辑 ---
+
+        function renderUI() {
+            if (!State.results) return;
+            const { containers, totalLen, totalCount } = State.results;
+
+            // 1. 统计数据（按实际库存消耗计算）
+            let packedLen = 0;
+            
+            // 直接使用 State.results.containers 来计算长度和数量
+            // 因为我们已经在算法中管理了库存，所以只需要统计实际装载的物品
+            
+            // 计算已装载的长度
+            State.results.containers.forEach(c => c.columns.forEach(col => {
+                col.items.forEach(it => {
+                    if (typeof it === 'string' && it.includes('2×2250⟲')) {
+                        packedLen += CONFIG.rotatedEffectiveLength; // 1100mm
+                    } else if (typeof it === 'string' && it.includes('⟲')) {
+                        packedLen += CONFIG.rotatedEffectiveLength; // 如1100mm
+                    } else if (typeof it === 'number') {
+                        packedLen += it; // 实际长度
+                    }
+                });
+            }));
+            
+            // 使用预设的 totalCount（这是最可靠的输入总数）
+            // 然后通过库存变化来计算实际使用量
+            const initialInventory = new Map();
+            State.results.inputItems.forEach(it => {
+                const current = initialInventory.get(it.length) || 0;
+                initialInventory.set(it.length, current + it.count);
+            });
+            
+            // 模拟整个装载过程中的库存消耗
+            const finalInventory = new Map(initialInventory);
+            
+            // 遍历所有容器中的物品，减少相应的库存
+            State.results.containers.forEach(c => {
+                c.columns.forEach(col => {
+                    col.items.forEach(item => {
+                        if (typeof item === 'string' && item.includes('2×2250⟲')) {
+                            // 旋转组合件：消耗2个2250
+                            const currentCount = finalInventory.get(2250) || 0;
+                            finalInventory.set(2250, currentCount - 2);
+                        } else if (typeof item === 'string' && item.includes('⟲')) {
+                            // 其他旋转件：消耗1个对应长度
+                            const len = parseInt(item.replace('⟲', ''));
+                            const currentCount = finalInventory.get(len) || 0;
+                            finalInventory.set(len, currentCount - 1);
+                        } else if (typeof item === 'number') {
+                            // 普通件：消耗1个对应长度
+                            const currentCount = finalInventory.get(item) || 0;
+                            finalInventory.set(item, currentCount - 1);
+                        }
+                    });
+                });
+            });
+            
+            let packedCount = 0;
+            let shortPackedCount = 0;
+            const shortThresholdInput = document.getElementById('shortThresholdInput');
+            let shortThreshold = shortThresholdInput ? parseInt(shortThresholdInput.value, 10) : CONFIG.shortThreshold;
+            if (!shortThreshold || shortThreshold < 0) shortThreshold = CONFIG.shortThreshold;
+            initialInventory.forEach((initialCount, len) => {
+                const finalCount = finalInventory.get(len) || 0;
+                let used = initialCount - finalCount;
+                if (used < 0) {
+                    used = initialCount;
+                }
+                packedCount += used;
+                if (len <= shortThreshold) {
+                    shortPackedCount += used;
+                }
+            });
+            packedCount = Math.round(packedCount);
+            if (packedCount > totalCount) {
+                packedCount = totalCount;
+            }
+            if (shortPackedCount > packedCount) {
+                shortPackedCount = packedCount;
+            }
+
+            const totalCap = containers.reduce((s, c) => s + c.cap * 4, 0);
+            const totalUtil = totalCap > 0 ? (packedLen / totalCap * 100).toFixed(2) : 0;
+            const unmounted = totalCount - packedCount;
+            const shortRatio = packedCount > 0 ? (shortPackedCount / packedCount * 100).toFixed(1) : '0.0';
+            const targetShortInput = document.getElementById('shortRatioInput');
+            let targetShortDisplay = '';
+            if (targetShortInput) {
+                const val = parseFloat(targetShortInput.value);
+                if (!isNaN(val) && val >= 0) {
+                    targetShortDisplay = ` / ${Math.min(100, Math.max(0, val)).toFixed(0)}%`;
+                }
+            }
+
+            const summaryHtml = `
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3>配柜结果汇总</h3>
+                        <span style="font-size:14px;color:#666;">${new Date().toLocaleString()}</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="label">总柜数</div>
+                            <div class="value">${containers.length}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">综合利用率</div>
+                            <div class="value">${totalUtil}%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">已配板材</div>
+                            <div class="value" style="color:#27ae60">${packedCount} <span style="font-size:14px;color:#999">/ ${totalCount}</span></div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">未装走</div>
+                            <div class="value" style="color:${unmounted > 0 ? '#e74c3c' : '#ccc'}">${unmounted}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">短料占比 (≤${shortThreshold}mm)</div>
+                            <div class="value">${shortRatio}%<span style="font-size:14px;color:#999">${targetShortDisplay}</span></div>
+                        </div>
+                    </div>
+                    ${unmounted > 0 ? `<div class="tips-box">有 ${unmounted} 件板材未装入，可能是单件长度超限或算法未能完全填满，建议人工检查。</div>` : ''}
+                </div>
+            `;
+            document.getElementById('summary').innerHTML = summaryHtml;
+
+            // 2. 矩阵分布表
+            renderMatrix(State.results);
+
+            // 3. 详情绘制
+            const detailsHtml = containers.map((c, idx) => {
+                const cUtil = ((c.columns.reduce((s, col) => s + col.used, 0) / (c.cap * 4)) * 100).toFixed(1);
+
+                const cMap = new Map();
+                c.columns.forEach(col => {
+                    col.items.forEach(len => {
+                        let actualLen;
+                        if (typeof len === 'string' && len.includes('2×2250')) {
+                            actualLen = 2250;
+                        } else if (typeof len === 'string' && len.includes('⟲')) {
+                            actualLen = parseInt(len.replace('⟲', ''));
+                        } else {
+                            actualLen = len;
+                        }
+                        cMap.set(actualLen, (cMap.get(actualLen) || 0) + 1);
+                    });
+                });
+                const cContentStr = Array.from(cMap.entries())
+                    .sort((a, b) => b[0] - a[0])
+                    .map(([l, cnt]) => `${l}mm <span style="color:#666">x${cnt}</span>`)
+                    .join('， ');
+                let cShortCount = 0;
+                let cTotalCount = 0;
+                const shortThresholdInput2 = document.getElementById('shortThresholdInput');
+                let shortThreshold2 = shortThresholdInput2 ? parseInt(shortThresholdInput2.value, 10) : CONFIG.shortThreshold;
+                if (!shortThreshold2 || shortThreshold2 < 0) shortThreshold2 = CONFIG.shortThreshold;
+                cMap.forEach((cnt, l) => {
+                    cTotalCount += cnt;
+                    if (l <= shortThreshold2) cShortCount += cnt;
+                });
+                const cShortRatio = cTotalCount > 0 ? (cShortCount / cTotalCount * 100).toFixed(1) : '0.0';
+
+                // 列绘制
+                const colsHtml = c.columns.map((col, cIdx) => {
+                    // 合并相同长度用于显示 bar
+                    // 为了视觉好看，我们不合并，直接全画出来，利用 CSS flex
+                    const bars = col.items.map(it => {
+                        const isRotCombo = (typeof it === 'string' && it.includes('2×2250⟲'));
+                        const isNormal2250 = (typeof it === 'number' && it === CONFIG.rotatableLength);
+                        const isOtherRot = (typeof it === 'string' && it.includes('⟲') && !it.includes('2×2250'));
+                        
+                        let displayLen, effectiveLen, titleText;
+                        
+                        if (isRotCombo) {
+                            displayLen = '2×2250';
+                            effectiveLen = CONFIG.rotatedEffectiveLength;
+                            titleText = '2个2250mm上下叠放 (旋转)';
+                        } else if (isNormal2250) {
+                            displayLen = it;
+                            effectiveLen = it;
+                            titleText = '2250mm (正常装载)';
+                        } else if (isOtherRot) {
+                            displayLen = CONFIG.rotatableLength;
+                            effectiveLen = CONFIG.rotatedEffectiveLength;
+                            titleText = `${CONFIG.rotatableLength}mm (旋转)`;
+                        } else {
+                            displayLen = it;
+                            effectiveLen = it;
+                            titleText = `${it}mm`;
+                        }
+                        
+                        const pct = (effectiveLen / c.cap * 100);
+                        // 正常2250也给特殊高亮
+                        const highlightClass = (isRotCombo || isNormal2250 || isOtherRot) ? 'rotated-highlight' : '';
+                        return `<div class="cargo-bar ${highlightClass}" style="width:${pct}%" title="${titleText}">${displayLen}${(isRotCombo || isOtherRot) ? '⟲' : ''}</div>`;
+                    }).join('');
+
+                    // 列统计
+                    const colMap = new Map();
+                    col.items.forEach(l => {
+                        let actualLen;
+                        // 处理不同类型的长度
+                        if (typeof l === 'string' && l.includes('2×2250')) {
+                            actualLen = 2250;
+                        } else if (typeof l === 'string' && l.includes('⟲')) {
+                            actualLen = parseInt(l.replace('⟲', ''));
+                        } else {
+                            actualLen = l;
+                        }
+                        colMap.set(actualLen, (colMap.get(actualLen) || 0) + 1);
+                    });
+                    const colInfo = Array.from(colMap.entries())
+                        .map(([l, cnt]) => `${l}*${cnt}`)
+                        .join(',');
+
+                    return `
+                        <div class="column-box">
+                            <div style="font-size:12px;color:#666;display:flex;justify-content:space-between;">
+                                <span>第${cIdx + 1}列</span>
+                                <span>${col.used} / ${c.cap}</span>
+                            </div>
+                            <div class="cargo-bar-container">${bars}</div>
+                            <div style="font-size:12px;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${colInfo}">
+                                ${colInfo || '空'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="container-display">
+                        <div class="container-header">
+                            <span>#${idx + 1} [${c.type === 'BIG' ? '大柜' : '小柜'}]</span>
+                            <span>本柜利用率: ${cUtil}% | 包含: ${cContentStr} | 短料占比: ${cShortRatio}%</span>
+                        </div>
+                        <div class="container-body">
+                            ${colsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('details').innerHTML = detailsHtml;
+        }
+
+        function renderMatrix(results) {
+            const matrixData = new Map();
+            const { inputItems, containers } = results;
+
+            // 初始化 Map
+            inputItems.forEach(it => {
+                if (!matrixData.has(it.length)) {
+                    matrixData.set(it.length, { originalTotal: 0, containers: new Array(containers.length).fill(0) });
+                }
+                matrixData.get(it.length).originalTotal += it.count;
+            });
+
+            // 按长度排序
+            const sortedLengths = Array.from(matrixData.keys()).sort((a, b) => b - a);
+
+            // 统计每个柜子的分布 (使用统一的统计逻辑)
+            sortedLengths.forEach(len => {
+                const data = matrixData.get(len);
+                data.containers.fill(0);
+                containers.forEach((c, cIdx) => {
+                    let containerCount = 0;
+                    c.columns.forEach(col => {
+                        col.items.forEach(it => {
+                            // 统一处理不同类型的长度
+                            let actualLen;
+                            if (typeof it === 'string' && it.includes('2×2250')) {
+                                actualLen = 2250;
+                            } else if (typeof it === 'string' && it.includes('⟲')) {
+                                actualLen = parseInt(it.replace('⟲', ''));
+                            } else {
+                                actualLen = it;
+                            }
+                            
+                            if (actualLen === len) {
+                                if (typeof it === 'string' && it.includes('2×2250⟲')) {
+                                    // 旋转组合件：每个组合件算1个（不是0.5个）
+                                    containerCount += 1.0;
+                                } else if (typeof it === 'string' && it.includes('⟲')) {
+                                    // 其他旋转件：每个算1个
+                                    containerCount += 1.0;
+                                } else {
+                                    // 普通件：每个算1个
+                                    containerCount += 1.0;
+                                }
+                            }
+                        });
+                    });
+                    data.containers[cIdx] = Math.round(containerCount);
+                });
+            });
+
+            // 生成 Table
+            let headerCells = `<th>长度 (mm)</th><th>总订单数</th>`;
+            for (let i = 0; i < containers.length; i++) {
+                headerCells += `<th>${i + 1}号柜</th>`;
+            }
+
+            let rows = sortedLengths.map(len => {
+                const data = matrixData.get(len);
+                const is2250 = (len === 2250);
+                const rowClass = is2250 ? 'class="highlight-row"' : '';
+                let cells = `<td>${len}</td><td class="matrix-total">${data.originalTotal}</td>`;
+                data.containers.forEach(cnt => {
+                    cells += `<td style="color:${cnt > 0 ? '#333' : '#ddd'}">${cnt > 0 ? cnt : '-'}</td>`;
+                });
+                return `<tr ${rowClass}>${cells}</tr>`;
+            }).join('');
+
+            const tableHtml = `
+                <h3 style="margin-bottom:15px;">配柜分布表</h3>
+                <table class="matrix-table">
+                    <thead><tr>${headerCells}</tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+            document.getElementById('matrixArea').innerHTML = tableHtml;
+        }
+
+        function exportData() {
+            if (!State.results) { alert('请先计算'); return; }
+            const { containers } = State.results;
+
+            let csvContent = "\uFEFF";
+            csvContent += "柜号,柜型,列号,列容量,已用,装载详情\n";
+
+            containers.forEach((c, cIdx) => {
+                c.columns.forEach((col, colIdx) => {
+                    const itemsStr = col.items.join('|');
+                    csvContent += `${cIdx + 1},${c.type},${colIdx + 1},${c.cap},${col.used},"${itemsStr}"\n`;
+                });
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `配柜方案_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`;
+            link.click();
+        }
+
+        // 简单的 Tooltip 辅助
+        document.body.addEventListener('mouseover', e => {
+            if (e.target.classList.contains('cargo-bar')) {
+                const tooltip = document.getElementById('customTooltip');
+                tooltip.textContent = e.target.getAttribute('title');
+                tooltip.style.display = 'block';
+                tooltip.style.left = (e.pageX + 10) + 'px';
+                tooltip.style.top = (e.pageY + 10) + 'px';
+            }
+        });
+        document.body.addEventListener('mouseout', e => {
+            if (e.target.classList.contains('cargo-bar')) {
+                document.getElementById('customTooltip').style.display = 'none';
+            }
+        });
+        document.body.addEventListener('mousemove', e => {
+            const tooltip = document.getElementById('customTooltip');
+            if (tooltip.style.display === 'block') {
+                tooltip.style.left = (e.pageX + 10) + 'px';
+                tooltip.style.top = (e.pageY + 10) + 'px';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
