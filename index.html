@@ -5,7 +5,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>木板厂集装箱配柜系统</title>
+    <!-- 引入 html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* PDF Export Optimizations */
+        .pdf-mode-container {
+            font-family: Arial, sans-serif !important;
+        }
+        .pdf-mode-container .summary-card {
+            box-shadow: none !important;
+            border: 1px solid #ccc !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+        }
+        .pdf-mode-container .matrix-container {
+            width: 100% !important;
+            overflow: visible !important;
+        }
+        .pdf-mode-container .matrix-table {
+            font-size: 8px !important; /* 缩小字体以适应多列 */
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+        .pdf-mode-container .matrix-table th, 
+        .pdf-mode-container .matrix-table td {
+            padding: 2px 1px !important;
+            border: 1px solid #999 !important;
+            white-space: nowrap !important; /* 防止换行 */
+        }
+        .pdf-details-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+        .pdf-details-grid .container-display {
+            box-shadow: none !important;
+            border: 1px solid #666 !important;
+            margin: 0 !important;
+            width: 48% !important; /* 每行两个 */
+            flex: 0 0 48% !important;
+            page-break-inside: avoid !important;
+        }
+        .pdf-details-grid .container-header {
+            background: #f0f0f0 !important;
+            border-bottom: 1px solid #ccc !important;
+        }
+        .pdf-details-grid .column {
+            background: #fff !important;
+            border-right: 1px solid #ccc !important;
+        }
+
         :root {
             --primary-color: #2c3e50;
             --accent-color: #3498db;
@@ -464,6 +514,306 @@
             }
         }
 
+        /* Print Styles - The Ultimate Solution for PDF Export */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                background-color: white !important;
+                padding: 0 !important;
+                color: #000 !important;
+            }
+
+            /* Hide non-report elements but keep Logo */
+            .header {
+                background: white !important;
+                color: black !important;
+                padding: 10px 0 !important;
+                border-bottom: 2px solid #000 !important;
+                display: flex !important;
+            }
+            
+            .header p, .header .github-link {
+                display: none !important;
+            }
+
+            .sx-logo-mark {
+                color: black !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+                background: none !important;
+            }
+
+            .form-group, 
+            .btn-group, 
+            #historySection, 
+            .footer-signature,
+            #editModal,
+            .tips-box {
+                display: none !important;
+            }
+            
+            /* Remove browser footer */
+            @page {
+                size: A4 landscape;
+                margin: 0; /* 关键：设为0以隐藏浏览器默认页眉页脚 */
+            }
+
+            body {
+                background-color: white !important;
+                padding: 10mm !important; /* 手动添加边距 */
+                color: #000 !important;
+            }
+
+            .main-container {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            /* Result area visibility */
+            .result-area {
+                display: block !important;
+            }
+
+            /* Summary Card */
+            .summary-card {
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid;
+                margin-bottom: 20px !important;
+            }
+
+            /* Matrix Table - Separate Page */
+            .matrix-container {
+                page-break-before: always;
+                page-break-after: always; /* Force break after matrix */
+                margin-bottom: 0 !important;
+                margin-top: 20px !important;
+            }
+            
+            /* Configuration Summary for Print */
+            .print-config-summary {
+                display: block !important;
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 20px;
+                font-size: 11px;
+                background: #f9f9f9;
+            }
+            
+            .matrix-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 10px !important;
+            }
+            
+            .matrix-table th, .matrix-table td {
+                border: 1px solid #000 !important;
+                padding: 4px !important;
+                color: #000 !important;
+            }
+            
+            .matrix-table th {
+                background-color: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Details Grid - Full Width per Container */
+            #details {
+                display: block !important; /* 取消 Grid，改为垂直堆叠 */
+                margin-top: 20px !important;
+            }
+
+            .container-display {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 2px solid #000 !important;
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
+                background: white !important;
+                width: 100% !important; /* 强制全宽 */
+                display: block !important;
+            }
+
+            /* 优化柜子内部布局 */
+            .container-body {
+                display: flex !important;
+                flex-wrap: nowrap !important; /* 禁止换行，确保4列在一行 */
+                overflow: visible !important; /* 允许溢出显示（配合缩放） */
+                justify-content: space-between;
+                padding: 10px !important;
+            }
+
+            .column {
+                border-right: 1px solid #ccc !important;
+                background-color: white !important;
+                flex: 1 !important; /* 均分宽度 */
+                min-width: 0 !important; /* 允许压缩 */
+                margin-right: 10px !important;
+            }
+            .column:last-child {
+                margin-right: 0 !important;
+                border-right: none !important;
+            }
+
+            /* 隐藏滚动条，确保打印完整 */
+            .container-display::-webkit-scrollbar {
+                display: none;
+            }
+
+            .container-header {
+                background-color: #f0f0f0 !important;
+                border-bottom: 1px solid #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 5px 10px !important;
+            }
+
+            .column {
+                border-right: 1px solid #ccc !important;
+                background-color: white !important;
+            }
+
+            .item-block {
+                border-bottom: 1px solid #eee !important;
+            }
+            
+            /* Add Title for Print */
+            .result-area::before {
+                content: "配柜方案报告";
+                display: block;
+                font-size: 24px;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            
+            .result-area::after {
+                content: "生成时间: " attr(data-print-date);
+                display: block;
+                text-align: right;
+                font-size: 10px;
+                margin-top: 5px;
+                margin-bottom: 20px;
+            }
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10002;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .edit-column {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .edit-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .edit-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .btn-tiny {
+            padding: 2px 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .btn-tiny:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-tiny.add { background: #d4edda; color: #155724; }
+        .btn-tiny.sub { background: #f8d7da; color: #721c24; }
+
+        .add-item-form {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .add-item-form input {
+            width: 60px;
+            padding: 4px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
         /* 登录遮罩样式 */
         #loginOverlay {
             position: fixed;
@@ -609,6 +959,9 @@
                 border: 2px solid #ff0000 !important;
             }
         }
+        .print-config-summary {
+            display: none;
+        }
     </style>
 </head>
 
@@ -624,6 +977,24 @@
     </div>
 
     <div id="customTooltip"></div>
+
+    <!-- 编辑模态框 -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="editModalTitle">编辑柜子</h3>
+                <span id="editModalCap" style="color:#666;"></span>
+            </div>
+            <div class="modal-body" id="editModalBody">
+                <!-- Columns injected here -->
+            </div>
+            <div class="modal-footer">
+                <button class="secondary" onclick="closeEditModal()">取消</button>
+                <button onclick="saveEditModal()">保存修改</button>
+            </div>
+        </div>
+    </div>
+
     <div class="main-container">
         <div class="header">
             <div class="header-main">
@@ -694,6 +1065,16 @@
             </div>
 
             <div class="form-group">
+                <label>优先级设置</label>
+                <div class="radio-group">
+                    <label class="radio-item" title="优先装载这些长度的板材，例如：900 1250">
+                        <span>优先尺寸</span>
+                        <input type="text" id="priorityLengthsInput" placeholder="输入长度，空格分隔..." style="width:200px;padding:4px 8px;">
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label>短料控制</label>
                 <div class="radio-group">
                     <label class="radio-item">
@@ -710,13 +1091,29 @@
                         <input type="checkbox" id="shortStrictToggle">
                         <span>强制短料占比上限</span>
                     </label>
+                    <label class="radio-item" title="每个柜子至少装多少件短料">
+                        <span>保底</span>
+                        <input type="number" id="minShortPerContainerInput" value="0" min="0" step="4" style="width:60px;padding:4px 8px;">
+                        <span>件</span>
+                    </label>
+                    <label class="radio-item" title="每个柜子最多装多少件短料 (0表示不限)">
+                        <span>上限</span>
+                        <input type="number" id="maxShortPerContainerInput" value="0" min="0" step="4" style="width:60px;padding:4px 8px;">
+                        <span>件</span>
+                    </label>
+                    <label class="radio-item">
+                        <span>余料阈值</span>
+                        <input type="number" id="leftoverThresholdInput" value="95" min="0" max="100" style="width:60px;padding:4px 8px;">
+                        <span>%</span>
+                    </label>
                 </div>
             </div>
 
             <div class="btn-group">
                 <button id="computeBtn">开始计算配柜</button>
                 <button id="saveBtn" style="background-color:#27ae60;">保存方案</button>
-                <button id="exportBtn" class="secondary">导出 Excel/CSV</button>
+                <button id="exportBtn" class="secondary">导出 CSV</button>
+                <button id="exportPdfBtn" class="secondary" style="background-color:#e67e22;">打印 / 另存为PDF</button>
                 <button id="printBtn" class="secondary">打印全部</button>
                 <button id="printMatrixBtn" class="secondary" style="background-color:#8e44ad;">打印分布表</button>
                 <button id="clearBtn" class="danger">清空输入</button>
@@ -740,6 +1137,145 @@
     </div>
 
     <script>
+        // --- 编辑功能状态 ---
+        let editingContainerIdx = -1;
+        let editingContainerSnapshot = null;
+
+        function openEditModal(cIdx) {
+            editingContainerIdx = cIdx;
+            // Deep copy to snapshot
+            editingContainerSnapshot = JSON.parse(JSON.stringify(State.results.containers[cIdx]));
+            renderEditModal();
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            editingContainerIdx = -1;
+            editingContainerSnapshot = null;
+        }
+
+        function saveEditModal() {
+            if (editingContainerIdx === -1) return;
+            // Update State
+            State.results.containers[editingContainerIdx] = editingContainerSnapshot;
+            // Re-render UI
+            renderUI();
+            renderMatrix(State.results);
+            closeEditModal();
+        }
+
+        function renderEditModal() {
+            if (!editingContainerSnapshot) return;
+            const c = editingContainerSnapshot;
+            document.getElementById('editModalTitle').textContent = `编辑 #${editingContainerIdx + 1}号柜 (${c.type === 'BIG' ? '大柜' : '小柜'})`;
+            
+            const body = document.getElementById('editModalBody');
+            body.innerHTML = '';
+
+            c.columns.forEach((col, colIdx) => {
+                const colDiv = document.createElement('div');
+                colDiv.className = 'edit-column';
+                
+                // Header
+                const header = document.createElement('div');
+                header.style.marginBottom = '10px';
+                header.style.fontWeight = 'bold';
+                header.style.display = 'flex';
+                header.style.justifyContent = 'space-between';
+                const usagePct = (col.used / c.cap * 100).toFixed(1);
+                header.innerHTML = `<span>第${colIdx + 1}列</span><span style="color:${col.used > c.cap ? 'red' : 'green'}">${col.used}/${c.cap} (${usagePct}%)</span>`;
+                colDiv.appendChild(header);
+
+                // Group items
+                const itemMap = new Map();
+                col.items.forEach(it => {
+                    itemMap.set(it, (itemMap.get(it) || 0) + 1);
+                });
+
+                // List items
+                itemMap.forEach((count, item) => {
+                    const row = document.createElement('div');
+                    row.className = 'edit-item-row';
+                    
+                    let displayLabel = item;
+                    if (item === '2×2250⟲') displayLabel = '2×2250 (旋转)';
+                    else if (typeof item === 'string' && item.includes('⟲')) displayLabel = item.replace('⟲', '') + ' (旋转)';
+                    
+                    row.innerHTML = `
+                        <span>${displayLabel}</span>
+                        <div class="edit-controls">
+                            <button class="btn-tiny sub" onclick="updateEditItem(${colIdx}, '${item}', -1)">-</button>
+                            <span>${count}</span>
+                            <button class="btn-tiny add" onclick="updateEditItem(${colIdx}, '${item}', 1)">+</button>
+                        </div>
+                    `;
+                    colDiv.appendChild(row);
+                });
+
+                // Add Item Form
+                const addForm = document.createElement('div');
+                addForm.className = 'add-item-form';
+                addForm.innerHTML = `
+                    <input type="number" placeholder="长" id="addLen_${colIdx}">
+                    <input type="number" placeholder="数" value="1" id="addCnt_${colIdx}">
+                    <button class="btn-tiny add" onclick="addEditItem(${colIdx})">加</button>
+                `;
+                colDiv.appendChild(addForm);
+
+                body.appendChild(colDiv);
+            });
+        }
+
+        // Helper to update item count
+        window.updateEditItem = function(colIdx, itemStr, delta) {
+            const col = editingContainerSnapshot.columns[colIdx];
+            const itemVal = isNaN(parseInt(itemStr)) ? itemStr : parseInt(itemStr);
+            
+            if (delta < 0) {
+                // Remove one instance
+                const idx = col.items.indexOf(itemVal);
+                if (idx !== -1) {
+                    col.items.splice(idx, 1);
+                    // Recalculate used
+                    recalcColUsed(col);
+                }
+            } else {
+                // Add one instance
+                col.items.push(itemVal);
+                recalcColUsed(col);
+            }
+            renderEditModal();
+        };
+
+        window.addEditItem = function(colIdx) {
+            const lenInput = document.getElementById(`addLen_${colIdx}`);
+            const cntInput = document.getElementById(`addCnt_${colIdx}`);
+            const len = parseInt(lenInput.value);
+            const cnt = parseInt(cntInput.value);
+
+            if (!len || len <= 0 || !cnt || cnt <= 0) return;
+
+            const col = editingContainerSnapshot.columns[colIdx];
+            for(let i=0; i<cnt; i++) {
+                col.items.push(len);
+            }
+            recalcColUsed(col);
+            renderEditModal();
+        };
+
+        function recalcColUsed(col) {
+            let used = 0;
+            col.items.forEach(it => {
+                if (typeof it === 'number') used += it;
+                else if (it === '2×2250⟲') used += CONFIG.rotatedEffectiveLength;
+                else if (typeof it === 'string' && it.includes('⟲')) {
+                    used += CONFIG.rotatedEffectiveLength;
+                }
+            });
+            col.used = used;
+        }
+
         // --- 核心常量配置 ---
         const CONFIG = {
             caps: { BIG: 11800, SMALL: 5850 },
@@ -768,7 +1304,12 @@
             // 绑定按钮事件
             document.getElementById('computeBtn').addEventListener('click', runCalculation);
             document.getElementById('saveBtn').addEventListener('click', saveCurrentSolution);
+            document.getElementById('leftoverThresholdInput').addEventListener('input', () => {
+                renderUI(); // 实时刷新
+                saveToStorage();
+            });
             document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('exportPdfBtn').addEventListener('click', exportPDF);
             document.getElementById('printBtn').addEventListener('click', () => {
                 document.body.classList.remove('print-matrix-only');
                 window.print();
@@ -933,6 +1474,22 @@
             if (shortStrictEl) {
                 localStorage.setItem('pkg_shortStrict', shortStrictEl.checked ? '1' : '0');
             }
+            const minShortEl = document.getElementById('minShortPerContainerInput');
+            if (minShortEl) {
+                localStorage.setItem('pkg_minShort', minShortEl.value);
+            }
+            const maxShortEl = document.getElementById('maxShortPerContainerInput');
+            if (maxShortEl) {
+                localStorage.setItem('pkg_maxShort', maxShortEl.value);
+            }
+            const priorityEl = document.getElementById('priorityLengthsInput');
+            if (priorityEl) {
+                localStorage.setItem('pkg_priorityLengths', priorityEl.value);
+            }
+            const leftoverEl = document.getElementById('leftoverThresholdInput');
+            if (leftoverEl) {
+                localStorage.setItem('pkg_leftoverThreshold', leftoverEl.value);
+            }
         }
 
         function loadFromStorage() {
@@ -966,6 +1523,22 @@
             const savedShortStrict = localStorage.getItem('pkg_shortStrict');
             if (savedShortStrict !== null && document.getElementById('shortStrictToggle')) {
                 document.getElementById('shortStrictToggle').checked = savedShortStrict === '1';
+            }
+            const savedMinShort = localStorage.getItem('pkg_minShort');
+            if (savedMinShort !== null && document.getElementById('minShortPerContainerInput')) {
+                document.getElementById('minShortPerContainerInput').value = savedMinShort;
+            }
+            const savedMaxShort = localStorage.getItem('pkg_maxShort');
+            if (savedMaxShort !== null && document.getElementById('maxShortPerContainerInput')) {
+                document.getElementById('maxShortPerContainerInput').value = savedMaxShort;
+            }
+            const savedPriority = localStorage.getItem('pkg_priorityLengths');
+            if (savedPriority !== null && document.getElementById('priorityLengthsInput')) {
+                document.getElementById('priorityLengthsInput').value = savedPriority;
+            }
+            const savedLeftover = localStorage.getItem('pkg_leftoverThreshold');
+            if (savedLeftover !== null && document.getElementById('leftoverThresholdInput')) {
+                document.getElementById('leftoverThresholdInput').value = savedLeftover;
             }
         }
 
@@ -1019,26 +1592,51 @@
         // 查找最佳的“4列同配”方案
         // 返回: { recipe: [{len, count}...], totalLen, utilization } 或 null
         // 核心约束: 必须每种板材的数量 >= count * 4
-        function findBestRecipe(inventory, cap, minUtil, uniqueLengths) {
+        // validator: function(recipe, totalLen) -> boolean. 如果返回 false，则该方案无效
+        function findBestRecipe(inventory, cap, minUtil, uniqueLengths, prioritySet, validator) {
             let bestRecipe = null;
 
             // 递归搜索组合
-            function backtrack(idx, currentRecipe, currentLen) {
+            function backtrack(idx, currentRecipe, currentLen, currentPriorityScore) {
                 // 剪枝
                 if (currentLen > cap) return;
 
                 // 检查当前方案是否更优
                 const util = currentLen / cap;
                 if (util >= minUtil) {
-                    // 检查是否比已找到的更优 (优先利用率高，其次长度大)
-                    if (!bestRecipe || util > bestRecipe.utilization || (util === bestRecipe.utilization && currentLen > bestRecipe.totalLen)) {
-                        bestRecipe = {
-                            recipe: JSON.parse(JSON.stringify(currentRecipe)),
-                            totalLen: currentLen,
-                            utilization: util
-                        };
+                    // 验证是否符合额外约束 (如短料限制)
+                    let isValid = true;
+                    if (validator) {
+                        isValid = validator(currentRecipe, currentLen);
                     }
-                    if (util === 1.0) return; // 完美匹配，无需继续
+
+                    if (isValid) {
+                        // 评分逻辑：
+                        // 1. 优先分数高（包含更多优先尺寸）
+                        // 2. 利用率高
+                        // 3. 长度大
+                        let isBetter = false;
+                        if (!bestRecipe) isBetter = true;
+                        else {
+                            // 优先比较优先级分数
+                            if (currentPriorityScore > bestRecipe.priorityScore) isBetter = true;
+                            else if (currentPriorityScore === bestRecipe.priorityScore) {
+                                // 其次比较利用率
+                                if (util > bestRecipe.utilization) isBetter = true;
+                                else if (util === bestRecipe.utilization && currentLen > bestRecipe.totalLen) isBetter = true;
+                            }
+                        }
+
+                        if (isBetter) {
+                            bestRecipe = {
+                                recipe: JSON.parse(JSON.stringify(currentRecipe)),
+                                totalLen: currentLen,
+                                utilization: util,
+                                priorityScore: currentPriorityScore
+                            };
+                        }
+                    }
+                    // if (util === 1.0) return; // 完美匹配，但可能有更高优先级的完美匹配，所以不能直接退
                 }
 
                 if (idx >= uniqueLengths.length) return;
@@ -1046,6 +1644,9 @@
 
                 const len = uniqueLengths[idx];
                 const available = inventory.get(len) || 0;
+                
+                // 计算当前长度的优先级权重
+                const priorityWeight = (prioritySet && prioritySet.has(len)) ? 1000 : 0;
 
                 // --- 动态旋转判断逻辑 ---
                 const is2250 = (len === CONFIG.rotatableLength);
@@ -1068,7 +1669,7 @@
                         // 空间紧张：旋转装载
                         effectiveLen = CONFIG.rotatedEffectiveLength;
                         isRot = true;
-                        needPerStep = 2; // 跨2列
+                        needPerStep = 2; // 旋转件横跨2列，填满4列只需要2个组件（2块板）
                     }
                 } else {
                     // 非2250板材
@@ -1094,17 +1695,18 @@
                             effectiveLen,
                             is2250Normal: (is2250 && !isRot) // 标记是否为正常装载的2250
                         });
-                        backtrack(idx + 1, currentRecipe, currentLen + effectiveLen * i);
+                        // 累加优先级分数：每个单位 * 权重
+                        backtrack(idx + 1, currentRecipe, currentLen + effectiveLen * i, currentPriorityScore + priorityWeight * i);
                         currentRecipe.pop();
                     } else {
                         // 不选当前长度，跳过
-                        backtrack(idx + 1, currentRecipe, currentLen);
+                        backtrack(idx + 1, currentRecipe, currentLen, currentPriorityScore);
                     }
-                    if (bestRecipe && bestRecipe.utilization === 1.0) break;
+                    // 移除提前退出，以确保搜索到最高优先级
                 }
             }
 
-            backtrack(0, [], 0);
+            backtrack(0, [], 0, 0);
             return bestRecipe;
         }
 
@@ -1130,43 +1732,68 @@
         }
 
         function computeCurrentShortRatio(initialInventory, remainingInventory, threshold) {
-            let usedShort = 0;
-            let usedTotal = 0;
+            let usedShortLen = 0;
+            let usedTotalLen = 0;
             initialInventory.forEach((initialCount, len) => {
                 const remain = remainingInventory.get(len) || 0;
                 const used = initialCount - remain;
                 if (used > 0) {
-                    usedTotal += used;
-                    if (len <= threshold) usedShort += used;
+                    const totalL = used * len;
+                    usedTotalLen += totalL;
+                    if (len <= threshold) usedShortLen += totalL;
                 }
             });
-            if (usedTotal === 0) return 0;
-            return usedShort / usedTotal;
+            if (usedTotalLen === 0) return 0;
+            return usedShortLen / usedTotalLen;
         }
 
         function computeContainerShortStats(container, threshold) {
-            let shortCount = 0;
-            let totalCount = 0;
+            let shortLen = 0;
+            let totalLen = 0;
             container.columns.forEach(col => {
                 col.items.forEach(it => {
                     if (typeof it === 'number') {
-                        totalCount += 1;
-                        if (it <= threshold) shortCount += 1;
+                        totalLen += it;
+                        if (it <= threshold) shortLen += it;
                     } else if (typeof it === 'string') {
                         if (it.includes('2×')) {
                             const match = it.match(/2×(\d+)/);
                             const len = match ? parseInt(match[1], 10) : CONFIG.rotatableLength;
-                            totalCount += 2;
-                            if (len <= threshold) shortCount += 2;
+                            // 旋转组合件实际上是两块板，但在配柜逻辑里它占据的空间是 effectiveLength
+                            // 但这里的统计是为了计算“短料占比”，通常是指实际板材的长度占比
+                            // 如果是旋转组合件，意味着它是2块2250mm（或其他长度）的板
+                            // 所以长度应该是 2 * len
+                            // Wait, logic check:
+                            // "it" is a string in ONE column.
+                            // If it is '2x2250', it represents ONE plate in this column context?
+                            // No, physically '2x2250' spans 2 columns.
+                            // But here we iterate EACH column.
+                            // So we encounter this string TWICE for one physical unit (2 plates).
+                            // So 2 encounters = 2 plates.
+                            // So 1 encounter = 1 plate.
+                            // So length = 1 * len.
+                            // Wait, this was my previous logic which led to overcounting?
+                            // No, overcounting was because inventory deduction was 4.
+                            // Now inventory deduction is 2.
+                            // If we encounter it twice, we sum 2 * len. This represents 2 plates.
+                            // But physically we only have 1 plate (spanning 2 cols)? 
+                            // NO! Rotation means TWO plates form a 4-col layer?
+                            // OR Rotation means ONE plate spans 2 cols.
+                            // The standard interpretation: ONE plate spans 2 cols.
+                            // So if we have 2 columns with this tag, it is ONE plate.
+                            // So each column contributes 0.5 plate.
+                            // So length contribution should be 0.5 * len.
+                            totalLen += 0.5 * len;
+                            if (len <= threshold) shortLen += 0.5 * len;
                         } else if (it.includes('⟲')) {
                             const len = parseInt(it.replace('⟲', ''), 10);
-                            totalCount += 1;
-                            if (len <= threshold) shortCount += 1;
+                            totalLen += len;
+                            if (len <= threshold) shortLen += len;
                         }
                     }
                 });
             });
-            return { shortCount, totalCount };
+            return { shortLen, totalLen };
         }
 
         function runCalculation() {
@@ -1201,6 +1828,28 @@
             if (!shortThreshold || shortThreshold < 0) shortThreshold = CONFIG.shortThreshold;
             const shortStrictInput = document.getElementById('shortStrictToggle');
             const enforceShortLimit = shortStrictInput ? shortStrictInput.checked : false;
+            
+            const minShortInput = document.getElementById('minShortPerContainerInput');
+            let minShortPerContainer = minShortInput ? parseInt(minShortInput.value, 10) : 0;
+            if (minShortPerContainer < 0) minShortPerContainer = 0;
+
+            const maxShortInput = document.getElementById('maxShortPerContainerInput');
+            let maxShortPerContainer = maxShortInput ? parseInt(maxShortInput.value, 10) : 0;
+            if (maxShortPerContainer < 0) maxShortPerContainer = 0;
+
+            const leftoverThresholdInput = document.getElementById('leftoverThresholdInput');
+            let leftoverThreshold = leftoverThresholdInput ? parseFloat(leftoverThresholdInput.value) : 95;
+            if (leftoverThreshold < 0) leftoverThreshold = 0;
+            if (leftoverThreshold > 100) leftoverThreshold = 100;
+
+            const priorityLengthsInput = document.getElementById('priorityLengthsInput');
+            let prioritySet = new Set();
+            if (priorityLengthsInput && priorityLengthsInput.value.trim()) {
+                priorityLengthsInput.value.trim().split(/[\s,]+/).forEach(s => {
+                    const l = parseInt(s);
+                    if (!isNaN(l) && l > 0) prioritySet.add(l);
+                });
+            }
 
             const { inventory, totalLen, totalCount } = preprocessItems(inputItems);
             const initialInventory = new Map(inventory);
@@ -1273,59 +1922,164 @@
                     ]
                 };
 
-                // -- 步骤3: 核心配载 (Recipe) --
+                // -- 步骤3: 优先强制装载保底短料 --
+                let forcedShortCount = 0;
+                if (minShortPerContainer > 0) {
+                    // 找出所有短料
+                    let shortLengths = uniqueLengths.filter(l => l <= shortThreshold && remainingInventory.get(l) > 0);
+                    
+                    // 关键修正：对短料进行排序，优先尺寸排在最前面
+                    shortLengths.sort((a, b) => {
+                        const aPrio = prioritySet && prioritySet.has(a);
+                        const bPrio = prioritySet && prioritySet.has(b);
+                        if (aPrio && !bPrio) return -1; // a 是优先，排前面
+                        if (!aPrio && bPrio) return 1;  // b 是优先，排前面
+                        return b - a; // 否则按长度降序
+                    });
+
+                    // 循环尝试直到满足保底数量或无短料可装
+                    // 同时也要检查 maxShortPerContainer
+                    while (forcedShortCount < minShortPerContainer) {
+                         // Check max limit first (if max < min, logic is weird but we respect max)
+                         if (maxShortPerContainer > 0 && forcedShortCount >= maxShortPerContainer) break;
+
+                         const minUsed = Math.min(...container.columns.map(c => c.used));
+                         if ((currentCap - minUsed) <= 0) break; // 没空间了
+
+                         // 找一个能装4列的短料
+                         let bestShort = -1;
+                         for (const l of shortLengths) {
+                             if (remainingInventory.get(l) >= 4 && (currentCap - minUsed) >= l) {
+                                 // Check if adding 4 items exceeds max
+                                 if (maxShortPerContainer > 0 && (forcedShortCount + 4 > maxShortPerContainer)) {
+                                     continue; 
+                                 }
+                                 bestShort = l;
+                                 break; 
+                             }
+                         }
+
+                         if (bestShort !== -1) {
+                             // 装入1层 (4件)
+                             for (let i = 0; i < 4; i++) {
+                                 container.columns[i].items.push(bestShort);
+                                 container.columns[i].used += bestShort;
+                             }
+                             remainingInventory.set(bestShort, remainingInventory.get(bestShort) - 4);
+                             forcedShortCount += 4;
+                         } else {
+                             // 如果找不到能凑齐4列的，尝试找能凑齐2列的 (用于旋转或普通)
+                             // 但为了简单和整齐，这里只强制整行。如果只剩散件，留给后续的 Loose Fill
+                             break;
+                         }
+                    }
+                }
+
+                // -- 步骤4: 核心配载 (Recipe) --
                 while (true) {
                     const minUsed = Math.min(...container.columns.map(c => c.used));
                     const commonSpace = currentCap - minUsed;
                     if (commonSpace <= 0) break;
 
                     const stepShortRatio = computeCurrentShortRatio(initialInventory, remainingInventory, shortThreshold);
-                    let stepLengths = uniqueLengths;
-                    if (stepShortRatio + 1e-6 < targetShortRatio) {
-                        stepLengths = uniqueLengths.slice().sort((a, b) => {
+                    let stepLengths = uniqueLengths.slice(); // Copy first
+                    
+                    // 统一排序逻辑：优先尺寸 > 短料策略 > 长度
+                    stepLengths.sort((a, b) => {
+                        // 1. 优先尺寸
+                        const aPrio = prioritySet && prioritySet.has(a);
+                        const bPrio = prioritySet && prioritySet.has(b);
+                        if (aPrio && !bPrio) return -1;
+                        if (!aPrio && bPrio) return 1;
+                        
+                        // 2. 短料策略 (如果短料不足，优先长料)
+                        if (stepShortRatio + 1e-6 < targetShortRatio) {
                             const aShort = a <= shortThreshold;
                             const bShort = b <= shortThreshold;
                             if (aShort && !bShort) return -1;
                             if (!aShort && bShort) return 1;
-                            return b - a;
-                        });
-                    }
-
-                    let recipe = findBestRecipe(remainingInventory, commonSpace, 0.01, stepLengths);
-
-                    const enforceStrictRecipe = enforceShortLimit && targetShortRatio > 0;
-                    if (recipe && enforceStrictRecipe) {
-                        const stats = computeContainerShortStats(container, shortThreshold);
-                        let addShort = 0;
-                        let addTotal = 0;
-                        recipe.recipe.forEach(item => {
-                            const len = item.len;
-                            let piecesPerContainer = 0;
-                            if (item.isRot) {
-                                // 每个组合件2块，4列
-                                piecesPerContainer = 8 * item.count;
-                            } else {
-                                // 普通件或2250正常件：4列
-                                piecesPerContainer = 4 * item.count;
-                            }
-                            addTotal += piecesPerContainer;
-                            if (len <= shortThreshold) {
-                                addShort += piecesPerContainer;
-                            }
-                        });
-                        if (addTotal > 0) {
-                            const totalAfter = stats.totalCount + addTotal;
-                            const shortAfter = stats.shortCount + addShort;
-                            if (totalAfter > 0 && (shortAfter / totalAfter) - targetShortRatio > 1e-6) {
-                                const longOnly = stepLengths.filter(l => l > shortThreshold);
-                                if (longOnly.length > 0) {
-                                    recipe = findBestRecipe(remainingInventory, commonSpace, 0.01, longOnly);
-                                } else {
-                                    recipe = null;
-                                }
-                            }
                         }
-                    }
+                        
+                        // 3. 长度降序
+                        return b - a;
+                    });
+
+                    // 构建 Validator
+                    const recipeValidator = (recipe, totalLen) => {
+                         // Check Ratio & MaxCount
+                         if (!enforceShortLimit && maxShortPerContainer <= 0) return true;
+
+                         let addShortLen = 0;
+                         let addTotalLen = 0;
+                         let addShortCount = 0;
+
+                         recipe.forEach(item => {
+                             const len = item.len;
+                             let count = item.count; 
+                             let totalAddedLen = 0;
+                             let totalAddedCount = 0;
+                             
+                         if (item.isRot) {
+                                 totalAddedLen = 4 * len * count; // 长度是物理长度，4列每列都占了长度，但只有2块板
+                                 // Wait, if totalAddedLen is used for Ratio calculation:
+                                 // Ratio = ShortLen / TotalLen.
+                                 // If we count 2 plates as 4 columns of length...
+                                 // Then we are weighing rotation items double?
+                                 // Physically: 2 plates volume = 2 * L * W * H.
+                                 // Container volume = L_cont * W_cont * H_cont.
+                                 // Here we use Length summation as proxy for Volume/Count.
+                                 // If we use "Total Length of Boards":
+                                 // Then 2 plates = 2 * len.
+                                 // But here we add "4 * len * count".
+                                 // This seems inconsistent with "Total Length of Boards".
+                                 // Let's fix this too:
+                                 totalAddedLen = 2 * len * count;
+                                 totalAddedCount = 2 * count;
+                             } else {
+                                 totalAddedLen = 4 * len * count;
+                                 totalAddedCount = 4 * count;
+                             }
+                             
+                             addTotalLen += totalAddedLen;
+                             if (len <= shortThreshold) {
+                                 addShortLen += totalAddedLen;
+                                 addShortCount += totalAddedCount;
+                             }
+                         });
+
+                         // Check Ratio
+                         if (enforceShortLimit && targetShortRatio > 0 && addTotalLen > 0) {
+                             const stats = computeContainerShortStats(container, shortThreshold);
+                             const totalLenAfter = stats.totalLen + addTotalLen;
+                             const shortLenAfter = stats.shortLen + addShortLen;
+                             if (totalLenAfter > 0 && (shortLenAfter / totalLenAfter) > targetShortRatio + 1e-6) {
+                                 return false;
+                             }
+                         }
+
+                         // Check Count
+                         if (maxShortPerContainer > 0) {
+                             // Get current short count
+                             let currentShortCount = 0;
+                             container.columns.forEach(col => {
+                                  col.items.forEach(it => {
+                                      let len = 0; let count = 0;
+                                      if (typeof it === 'number') { len = it; count = 1; }
+                                      else if (it.includes('2×2250⟲')) { len = 2250; count = 1; }
+                                      else if (it.includes('⟲')) { len = parseInt(it.replace('⟲','')); count = 1; }
+                                      
+                                      if (len <= shortThreshold) currentShortCount += count;
+                                  });
+                             });
+                             if (currentShortCount + addShortCount > maxShortPerContainer) {
+                                 return false;
+                             }
+                         }
+
+                         return true;
+                    };
+
+                    let recipe = findBestRecipe(remainingInventory, commonSpace, 0.01, stepLengths, prioritySet, recipeValidator);
 
                     if (recipe) {
                         recipe.recipe.forEach(item => {
@@ -1362,7 +2116,7 @@
                     }
                 }
 
-                // -- 步骤4: 散件填充 (Loose Fill with Rotation awareness) --
+                // -- 步骤5: 散件填充 (Loose Fill with Rotation awareness) --
                 const pairs = [[0, 1], [2, 3]];
                 pairs.forEach(([i, j]) => {
                     let changed = true;
@@ -1386,15 +2140,15 @@
                                 });
                                 remainingInventory.set(CONFIG.rotatableLength, remainingInventory.get(CONFIG.rotatableLength) - 2);
                                 changed = true; continue;
-                            } else if (remaining2250 >= 2 && 
+                            } else if (remaining2250 >= 1 && 
                                       spaceI >= CONFIG.rotatedEffectiveLength && 
                                       spaceJ >= CONFIG.rotatedEffectiveLength) {
-                                // 空间紧张：旋转装载
+                                // 空间紧张：旋转装载 (1件占2列)
                                 [colI, colJ].forEach(c => {
                                     c.items.push('2×2250⟲');
                                     c.used += CONFIG.rotatedEffectiveLength;
                                 });
-                                remainingInventory.set(CONFIG.rotatableLength, remainingInventory.get(CONFIG.rotatableLength) - 2);
+                                remainingInventory.set(CONFIG.rotatableLength, remainingInventory.get(CONFIG.rotatableLength) - 1);
                                 changed = true; continue;
                             }
                         }
@@ -1402,26 +2156,64 @@
                         for (let col of [colI, colJ]) {
                             const currentShortRatio = computeCurrentShortRatio(initialInventory, remainingInventory, shortThreshold);
                             let orderedLengths = uniqueLengths.slice();
-                            if (currentShortRatio + 1e-6 < targetShortRatio) {
-                                orderedLengths.sort((a, b) => {
+                            
+                            // 排序逻辑：优先尺寸 > 短料策略 > 长度
+                            orderedLengths.sort((a, b) => {
+                                // 1. 优先尺寸最高优先级
+                                const aPrio = prioritySet && prioritySet.has(a);
+                                const bPrio = prioritySet && prioritySet.has(b);
+                                if (aPrio && !bPrio) return -1;
+                                if (!aPrio && bPrio) return 1;
+
+                                // 2. 短料策略
+                                if (currentShortRatio + 1e-6 < targetShortRatio) {
                                     const aShort = a <= shortThreshold;
                                     const bShort = b <= shortThreshold;
                                     if (aShort && !bShort) return -1;
                                     if (!aShort && bShort) return 1;
-                                    return b - a;
-                                });
-                            }
+                                }
+                                
+                                // 3. 长度降序
+                                return b - a;
+                            });
+
                             const enableStrict = enforceShortLimit && targetShortRatio > 0;
+                            const enableMaxCount = maxShortPerContainer > 0;
+
                             for (let len of orderedLengths) {
                                 if (remainingInventory.get(len) > 0 && (currentCap - col.used) >= len) {
+                                    // Check Limits
+                                    let violated = false;
+                                    
                                     if (enableStrict && len <= shortThreshold) {
                                         const stats = computeContainerShortStats(container, shortThreshold);
-                                        const totalAfter = stats.totalCount + 1;
-                                        const shortAfter = stats.shortCount + 1;
-                                        if (totalAfter > 0 && (shortAfter / totalAfter) - targetShortRatio > 1e-6) {
-                                            continue;
+                                        const totalLenAfter = stats.totalLen + len;
+                                        const shortLenAfter = stats.shortLen + len;
+                                        if (totalLenAfter > 0 && (shortLenAfter / totalLenAfter) > targetShortRatio + 1e-6) {
+                                            violated = true;
                                         }
                                     }
+                                    
+                                    if (!violated && enableMaxCount && len <= shortThreshold) {
+                                         // Check count
+                                         let currentShortCount = 0;
+                                         container.columns.forEach(c => {
+                                             c.items.forEach(it => {
+                                                 let l = 0; let count = 0;
+                                                 if (typeof it === 'number') { l = it; count = 1; }
+                                                 else if (it.includes('2×2250⟲')) { l = 2250; count = 1; }
+                                                 else if (it.includes('⟲')) { l = parseInt(it.replace('⟲','')); count = 1; }
+                                                 
+                                                 if (l <= shortThreshold) currentShortCount += count;
+                                             });
+                                         });
+                                         if (currentShortCount + 1 > maxShortPerContainer) {
+                                             violated = true;
+                                         }
+                                    }
+
+                                    if (violated) continue;
+
                                     col.items.push(len);
                                     col.used += len;
                                     remainingInventory.set(len, remainingInventory.get(len) - 1);
@@ -1440,10 +2232,55 @@
                     break;
                 }
 
-                containers.push(container);
+                // 判断是否达标
+                const usedTotal = container.columns.reduce((s, c) => s + c.used, 0);
+                const capTotal = container.cap * 4;
+                const utilPct = usedTotal / capTotal * 100;
+                
+                // 获取当前实时的阈值
+                const leftoverThresholdInput = document.getElementById('leftoverThresholdInput');
+                let realTimeThreshold = leftoverThresholdInput ? parseFloat(leftoverThresholdInput.value) : 95;
+
+                if (utilPct < realTimeThreshold) {
+                    // 如果利用率不达标，不放入 containers 列表
+                    // 这些板材会自动留在 remainingInventory 中（因为我们还没有从 remainingInventory 中永久移除它们？不对）
+                    // 现在的逻辑是：在配柜过程中，我们是实时修改 remainingInventory 的。
+                    // 所以如果这个柜子不要了，我们需要把在这个柜子里用掉的板材“加回” remainingInventory。
+                    // 但由于 remainingInventory 是 Map，且逻辑复杂，更简单的方法是：
+                    // 不把这个 container 加入结果列表，
+                    // 并且终止循环（因为剩下的肯定更装不下了，除非是大小柜切换逻辑，但通常最后的余料就是余料）
+                    // 剩下的 remainingInventory 自然就是余料。
+                    
+                    // 但是，我们需要把刚才装进这个 container 的东西“退回”给 remainingInventory 吗？
+                    // 是的，因为它们实际上没有被“装走”。
+                    // 不过，与其退回，不如直接保留在 remainingInventory 里？
+                    // 在上面的 while 循环里，我们是一边装一边减库存的。
+                    // 所以如果决定废弃这个柜子，我们需要把库存加回去。
+                    
+                    container.columns.forEach(col => {
+                        col.items.forEach(it => {
+                            if (typeof it === 'number') {
+                                remainingInventory.set(it, (remainingInventory.get(it) || 0) + 1);
+                            } else if (typeof it === 'string') {
+                                if (it.includes('2×2250⟲')) {
+                                    remainingInventory.set(2250, (remainingInventory.get(2250) || 0) + 0.5);
+                                } else if (it.includes('⟲')) {
+                                    const len = parseInt(it.replace('⟲', ''));
+                                    remainingInventory.set(len, (remainingInventory.get(len) || 0) + 1);
+                                }
+                            }
+                        });
+                    });
+                    
+                    // 终止配柜，因为剩下的都是散件，肯定也装不满下一个柜子了
+                    break;
+                } else {
+                    container.isLeftover = false;
+                    containers.push(container);
+                }
             }
 
-            State.results = { containers, totalLen, totalCount, inputItems };
+            State.results = { containers, totalLen, totalCount, inputItems, leftovers: remainingInventory };
             renderUI();
         }
 
@@ -1451,7 +2288,7 @@
 
         function renderUI() {
             if (!State.results) return;
-            const { containers, totalLen, totalCount } = State.results;
+            const { containers, totalLen, totalCount, leftovers } = State.results;
 
             // 1. 统计数据（按实际库存消耗计算）
             let packedLen = 0;
@@ -1488,9 +2325,9 @@
                 c.columns.forEach(col => {
                     col.items.forEach(item => {
                         if (typeof item === 'string' && item.includes('2×2250⟲')) {
-                            // 旋转组合件：消耗2个2250
+                            // 旋转组合件：每个Entry代表1个 (因为2个Entry = 2块板)
                             const currentCount = finalInventory.get(2250) || 0;
-                            finalInventory.set(2250, currentCount - 2);
+                            finalInventory.set(2250, currentCount - 1);
                         } else if (typeof item === 'string' && item.includes('⟲')) {
                             // 其他旋转件：消耗1个对应长度
                             const len = parseInt(item.replace('⟲', ''));
@@ -1506,7 +2343,8 @@
             });
             
             let packedCount = 0;
-            let shortPackedCount = 0;
+            let shortPackedLen = 0;
+            let totalPackedLen = 0;
             const shortThresholdInput = document.getElementById('shortThresholdInput');
             let shortThreshold = shortThresholdInput ? parseInt(shortThresholdInput.value, 10) : CONFIG.shortThreshold;
             if (!shortThreshold || shortThreshold < 0) shortThreshold = CONFIG.shortThreshold;
@@ -1517,22 +2355,38 @@
                     used = initialCount;
                 }
                 packedCount += used;
+                
+                const usedLen = used * len;
+                totalPackedLen += usedLen;
                 if (len <= shortThreshold) {
-                    shortPackedCount += used;
+                    shortPackedLen += usedLen;
                 }
             });
             packedCount = Math.round(packedCount);
             if (packedCount > totalCount) {
                 packedCount = totalCount;
             }
-            if (shortPackedCount > packedCount) {
-                shortPackedCount = packedCount;
-            }
+            // if (shortPackedCount > packedCount) {
+            //    shortPackedCount = packedCount;
+            // }
 
             const totalCap = containers.reduce((s, c) => s + c.cap * 4, 0);
             const totalUtil = totalCap > 0 ? (packedLen / totalCap * 100).toFixed(2) : 0;
-            const unmounted = totalCount - packedCount;
-            const shortRatio = packedCount > 0 ? (shortPackedCount / packedCount * 100).toFixed(1) : '0.0';
+            // 计算余料总数
+            let leftoverCount = 0;
+            let leftoverDetails = [];
+            if (leftovers) {
+                leftovers.forEach((cnt, len) => {
+                    if (cnt > 0) {
+                        leftoverCount += cnt;
+                        leftoverDetails.push({len, cnt});
+                    }
+                });
+                leftoverDetails.sort((a, b) => b.len - a.len);
+            }
+            const unmounted = totalCount - packedCount; // 这应该等于 leftoverCount，除非有误差
+
+            const shortRatio = totalPackedLen > 0 ? (shortPackedLen / totalPackedLen * 100).toFixed(1) : '0.0';
             const targetShortInput = document.getElementById('shortRatioInput');
             let targetShortDisplay = '';
             if (targetShortInput) {
@@ -1541,6 +2395,9 @@
                     targetShortDisplay = ` / ${Math.min(100, Math.max(0, val)).toFixed(0)}%`;
                 }
             }
+            
+            // 构建余料显示字符串
+            const leftoverStr = leftoverDetails.map(d => `${d.len}mm x${d.cnt}`).join('， ');
 
             const summaryHtml = `
                 <div class="summary-card">
@@ -1562,15 +2419,15 @@
                             <div class="value" style="color:#27ae60">${packedCount} <span style="font-size:14px;color:#999">/ ${totalCount}</span></div>
                         </div>
                         <div class="stat-item">
-                            <div class="label">未装走</div>
-                            <div class="value" style="color:${unmounted > 0 ? '#e74c3c' : '#ccc'}">${unmounted}</div>
+                            <div class="label">未装走 (余料)</div>
+                            <div class="value" style="color:${leftoverCount > 0 ? '#e74c3c' : '#ccc'}">${leftoverCount}</div>
                         </div>
                         <div class="stat-item">
                             <div class="label">短料占比 (≤${shortThreshold}mm)</div>
                             <div class="value">${shortRatio}%<span style="font-size:14px;color:#999">${targetShortDisplay}</span></div>
                         </div>
                     </div>
-                    ${unmounted > 0 ? `<div class="tips-box">有 ${unmounted} 件板材未装入，可能是单件长度超限或算法未能完全填满，建议人工检查。</div>` : ''}
+                    ${leftoverCount > 0 ? `<div class="tips-box" style="word-break: break-all;"><strong>余料详情：</strong>${leftoverStr}</div>` : ''}
                 </div>
             `;
             document.getElementById('summary').innerHTML = summaryHtml;
@@ -1579,8 +2436,20 @@
             renderMatrix(State.results);
 
             // 3. 详情绘制
+            const leftoverThresholdInput = document.getElementById('leftoverThresholdInput');
+            let realTimeThreshold = leftoverThresholdInput ? parseFloat(leftoverThresholdInput.value) : 95;
+            
             const detailsHtml = containers.map((c, idx) => {
-                const cUtil = ((c.columns.reduce((s, col) => s + col.used, 0) / (c.cap * 4)) * 100).toFixed(1);
+                const cUtilVal = (c.columns.reduce((s, col) => s + col.used, 0) / (c.cap * 4)) * 100;
+                const cUtil = cUtilVal.toFixed(1);
+                
+                // 动态判断，不依赖 stored state
+                const isLeftover = cUtilVal < realTimeThreshold;
+                // 更新 state 以便导出时使用
+                c.isLeftover = isLeftover;
+
+                const containerTitleStyle = isLeftover ? 'color: red;' : '';
+                const leftoverBadge = isLeftover ? '<span style="background:#e74c3c;color:white;padding:2px 6px;border-radius:4px;font-size:12px;margin-left:10px;">余料柜</span>' : '';
 
                 const cMap = new Map();
                 c.columns.forEach(col => {
@@ -1600,16 +2469,17 @@
                     .sort((a, b) => b[0] - a[0])
                     .map(([l, cnt]) => `${l}mm <span style="color:#666">x${cnt}</span>`)
                     .join('， ');
-                let cShortCount = 0;
-                let cTotalCount = 0;
+                let cShortLen = 0;
+                let cTotalLen = 0;
                 const shortThresholdInput2 = document.getElementById('shortThresholdInput');
                 let shortThreshold2 = shortThresholdInput2 ? parseInt(shortThresholdInput2.value, 10) : CONFIG.shortThreshold;
                 if (!shortThreshold2 || shortThreshold2 < 0) shortThreshold2 = CONFIG.shortThreshold;
                 cMap.forEach((cnt, l) => {
-                    cTotalCount += cnt;
-                    if (l <= shortThreshold2) cShortCount += cnt;
+                    const length = cnt * l;
+                    cTotalLen += length;
+                    if (l <= shortThreshold2) cShortLen += length;
                 });
-                const cShortRatio = cTotalCount > 0 ? (cShortCount / cTotalCount * 100).toFixed(1) : '0.0';
+                const cShortRatio = cTotalLen > 0 ? (cShortLen / cTotalLen * 100).toFixed(1) : '0.0';
 
                 // 列绘制
                 const colsHtml = c.columns.map((col, cIdx) => {
@@ -1679,10 +2549,13 @@
                 }).join('');
 
                 return `
-                    <div class="container-display">
+                    <div class="container-display" style="${isLeftover ? 'border: 2px dashed #e74c3c;' : ''}">
                         <div class="container-header">
-                            <span>#${idx + 1} [${c.type === 'BIG' ? '大柜' : '小柜'}]</span>
-                            <span>本柜利用率: ${cUtil}% | 包含: ${cContentStr} | 短料占比: ${cShortRatio}%</span>
+                            <span style="${containerTitleStyle}">#${idx + 1} [${c.type === 'BIG' ? '大柜' : '小柜'}]${leftoverBadge}</span>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span style="font-weight:normal;font-size:12px;color:#555;">利用率: ${cUtil}% | 短料: ${cShortRatio}%</span>
+                                <button class="btn-mini" onclick="openEditModal(${idx})" style="background:#fff;border:1px solid #ccc;cursor:pointer;">修改</button>
+                            </div>
                         </div>
                         <div class="container-body">
                             ${colsHtml}
@@ -1695,28 +2568,45 @@
 
         function renderMatrix(results) {
             const matrixData = new Map();
-            const { inputItems, containers } = results;
+            const { inputItems, containers, leftovers } = results;
 
             // 初始化 Map
             inputItems.forEach(it => {
                 if (!matrixData.has(it.length)) {
-                    matrixData.set(it.length, { originalTotal: 0, containers: new Array(containers.length).fill(0) });
+                    matrixData.set(it.length, { originalTotal: 0, containers: new Array(containers.length).fill(0), remaining: 0 });
                 }
                 matrixData.get(it.length).originalTotal += it.count;
             });
 
+            // 更新剩余数量
+            if (leftovers) {
+                leftovers.forEach((cnt, len) => {
+                    if (matrixData.has(len)) {
+                        matrixData.get(len).remaining = cnt;
+                    } else if (cnt > 0) {
+                         // 理论上 inputItems 应该包含所有，但以防万一
+                        matrixData.set(len, { originalTotal: 0, containers: new Array(containers.length).fill(0), remaining: cnt });
+                    }
+                });
+            }
+
             // 按长度排序
             const sortedLengths = Array.from(matrixData.keys()).sort((a, b) => b - a);
 
-            // 统计每个柜子的分布 (使用统一的统计逻辑)
+            // 统计每个柜子的分布
             sortedLengths.forEach(len => {
                 const data = matrixData.get(len);
-                data.containers.fill(0);
+                // Resize array if needed (though containers length shouldn't change mid-render)
+                if (data.containers.length !== containers.length) {
+                    data.containers = new Array(containers.length).fill(0);
+                } else {
+                    data.containers.fill(0);
+                }
+                
                 containers.forEach((c, cIdx) => {
                     let containerCount = 0;
                     c.columns.forEach(col => {
                         col.items.forEach(it => {
-                            // 统一处理不同类型的长度
                             let actualLen;
                             if (typeof it === 'string' && it.includes('2×2250')) {
                                 actualLen = 2250;
@@ -1728,13 +2618,10 @@
                             
                             if (actualLen === len) {
                                 if (typeof it === 'string' && it.includes('2×2250⟲')) {
-                                    // 旋转组合件：每个组合件算1个（不是0.5个）
-                                    containerCount += 1.0;
+                                    containerCount += 0.5;
                                 } else if (typeof it === 'string' && it.includes('⟲')) {
-                                    // 其他旋转件：每个算1个
                                     containerCount += 1.0;
                                 } else {
-                                    // 普通件：每个算1个
                                     containerCount += 1.0;
                                 }
                             }
@@ -1744,17 +2631,58 @@
                 });
             });
 
+            // 计算每个柜子的利用率和短料占比
+            const containerUtils = [];
+            const containerShortRatios = [];
+            
+            containers.forEach(c => {
+                 const usedTotal = c.columns.reduce((s, col) => s + col.used, 0);
+                 const capTotal = c.cap * 4;
+                 containerUtils.push((usedTotal / capTotal * 100).toFixed(1) + '%');
+                 
+                 // 计算短料占比
+                 const shortThreshold = parseInt(document.getElementById('shortThresholdInput')?.value || 2050);
+                 const stats = computeContainerShortStats(c, shortThreshold);
+                 const ratio = stats.totalLen > 0 ? (stats.shortLen / stats.totalLen * 100).toFixed(1) : '0.0';
+                 containerShortRatios.push(ratio + '%');
+            });
+
             // 生成 Table
-            let headerCells = `<th>长度 (mm)</th><th>总订单数</th>`;
+            // 头部第一行：标题
+            let headerCells = `<th>剩余</th><th>长度 (mm)</th><th>总包数</th>`;
             for (let i = 0; i < containers.length; i++) {
-                headerCells += `<th>${i + 1}号柜</th>`;
+                const c = containers[i];
+                const isLeftover = c.isLeftover;
+                const style = isLeftover ? 'color:red' : '';
+                headerCells += `<th style="${style}">${i + 1}号柜<br><span style="font-size:11px;font-weight:normal;">${isLeftover?'(余料)':''}</span></th>`;
             }
+
+            // 底部第一行：利用率
+            let utilCells = `<td colspan="3" style="text-align:right;font-weight:bold;background:#f0f0f0;">利用率</td>`;
+            for (let i = 0; i < containers.length; i++) {
+                const c = containers[i];
+                const isLeftover = c.isLeftover;
+                const style = isLeftover ? 'color:red;font-weight:bold;' : 'color:green;font-weight:bold;';
+                utilCells += `<td style="${style}">${containerUtils[i]}</td>`;
+            }
+            const utilRow = `<tr style="border-top:2px solid #ccc;">${utilCells}</tr>`;
+
+            // 底部第二行：短料占比
+            let shortCells = `<td colspan="3" style="text-align:right;font-weight:bold;background:#f0f0f0;">短料占比(≤${document.getElementById('shortThresholdInput')?.value || 2050})</td>`;
+            for (let i = 0; i < containers.length; i++) {
+                shortCells += `<td>${containerShortRatios[i]}</td>`;
+            }
+            const shortRow = `<tr>${shortCells}</tr>`;
 
             let rows = sortedLengths.map(len => {
                 const data = matrixData.get(len);
                 const is2250 = (len === 2250);
                 const rowClass = is2250 ? 'class="highlight-row"' : '';
-                let cells = `<td>${len}</td><td class="matrix-total">${data.originalTotal}</td>`;
+                
+                // 剩余列高亮：如果有剩余，标红
+                const remainStyle = data.remaining > 0 ? 'color:red;font-weight:bold;' : 'color:#ccc;';
+                
+                let cells = `<td style="${remainStyle}">${data.remaining}</td><td>${len}</td><td class="matrix-total">${data.originalTotal}</td>`;
                 data.containers.forEach(cnt => {
                     cells += `<td style="color:${cnt > 0 ? '#333' : '#ddd'}">${cnt > 0 ? cnt : '-'}</td>`;
                 });
@@ -1764,8 +2692,16 @@
             const tableHtml = `
                 <h3 style="margin-bottom:15px;">配柜分布表</h3>
                 <table class="matrix-table">
-                    <thead><tr>${headerCells}</tr></thead>
-                    <tbody>${rows}</tbody>
+                    <thead>
+                        <tr>${headerCells}</tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                    <tfoot>
+                        ${utilRow}
+                        ${shortRow}
+                    </tfoot>
                 </table>
             `;
             document.getElementById('matrixArea').innerHTML = tableHtml;
@@ -1776,12 +2712,13 @@
             const { containers } = State.results;
 
             let csvContent = "\uFEFF";
-            csvContent += "柜号,柜型,列号,列容量,已用,装载详情\n";
+            csvContent += "柜号,柜型,属性,列号,列容量,已用,装载详情\n";
 
             containers.forEach((c, cIdx) => {
+                const attr = c.isLeftover ? "余料柜" : "正常柜";
                 c.columns.forEach((col, colIdx) => {
                     const itemsStr = col.items.join('|');
-                    csvContent += `${cIdx + 1},${c.type},${colIdx + 1},${c.cap},${col.used},"${itemsStr}"\n`;
+                    csvContent += `${cIdx + 1},${c.type},${attr},${colIdx + 1},${c.cap},${col.used},"${itemsStr}"\n`;
                 });
             });
 
@@ -1790,6 +2727,49 @@
             link.href = URL.createObjectURL(blob);
             link.download = `配柜方案_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`;
             link.click();
+        }
+
+        function exportPDF() {
+            if (!State.results) { alert('请先计算'); return; }
+            
+            // 设置打印日期
+            const resultArea = document.querySelector('.result-area');
+            resultArea.setAttribute('data-print-date', new Date().toLocaleString());
+
+            // 动态构建配置摘要
+            let configSummary = document.querySelector('.print-config-summary');
+            if (!configSummary) {
+                configSummary = document.createElement('div');
+                configSummary.className = 'print-config-summary';
+                // 插入到 summary 之前
+                const summaryCard = document.getElementById('summary');
+                summaryCard.parentNode.insertBefore(configSummary, summaryCard);
+            }
+            
+            // 收集当前配置 (Safe Retrieval)
+            const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value : '无';
+            
+            const bigCap = getVal('bigCapInput');
+            const smallCap = getVal('smallCapInput');
+            const priority = getVal('priorityLengthsInput');
+            const shortThreshold = getVal('shortThresholdInput');
+            const targetShortRatio = getVal('shortRatioInput');
+            const minShort = getVal('minShortPerContainerInput');
+            const maxShort = getVal('maxShortPerContainerInput');
+            const leftoverThreshold = getVal('leftoverThresholdInput');
+            
+            configSummary.innerHTML = `
+                <strong>参数配置：</strong>
+                大柜长度: ${bigCap}mm | 小柜长度: ${smallCap}mm | 
+                优先尺寸: ${priority} | 短料定义: ≤${shortThreshold}mm | 
+                短料控制: 目标占比${targetShortRatio}% / 保底${minShort}件 / 上限${maxShort}件 | 
+                余料阈值: ${leftoverThreshold}%
+            `;
+
+            // 提示用户
+            if (confirm("系统将打开打印视图。\n\n【重要提示】\n为了获得纯净的 PDF（无左下角地址）：\n请在打印设置中，取消勾选【页眉和页脚】选项。\n\n点击【确定】继续。")) {
+                window.print();
+            }
         }
 
         // 简单的 Tooltip 辅助
